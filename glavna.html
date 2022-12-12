@@ -1,0 +1,12 @@
+% rebase('osnova.html')
+
+
+<h1>To je moja spletna stran</h1>
+
+<h2>Vsi uporabniki so trenutno</h2>
+
+<ul>
+    % for up in uporabniki:
+    <li> {{ up }} </li>
+    % end
+</ul>
