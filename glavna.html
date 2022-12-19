@@ -7,6 +7,13 @@
 
 <ul>
     % for up in uporabniki:
-    <li> {{ up }} </li>
+    <div class="columns">
+        <div class="column">{{ up[0] }}</div>
+        <div class="column moja-rdeca">{{ up[1] }}</div>  <!--napišemo še moja-rdeča, najprej smo use naredili na spletni_vmesnik in style.css@bottle.route("/static/slikice/<filename>")    #ZA SLIKO
+            def serve_static_files(filename):
+                return bottle.static_file(filename, root="./static/img")-->
+        <div class="column">{{ up[2] }}</div>
+    </div>
+    <!--li> {{ up }} </li-->
     % end
 </ul>
