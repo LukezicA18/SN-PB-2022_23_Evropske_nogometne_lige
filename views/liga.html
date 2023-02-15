@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <body>
+      
+      
+      <br><br>
+      
+      <form action="/lestvica" method="post">
+          <label for="liga">Liga:</label>
+          <select name="liga" id="liga">
+          <option value="1729">England Premier League</option>
+          <option value="4769">France Ligue 1</option>
+          <option value="7809">Germany 1. Bundesliga</option>
+          <option value="10257">Italy Serie A</option>
+          <option value="21518">Spain LIGA BBVA</option>
+          <option value="392 or 1">sql injection</option>
+        </select>
+        <label for="sezona">Sezona:</label>
+        <select name="sezona" id="sezona">
+            <option value="TODO">2015/2016</option>
+        </select>
+        <button type="submit">Išči!</button>
+        
+        
+    </form>
+    <ul>
+        %for long, short in ekipe:
+        <li>
+            <a href="/ekipa/{{long}}">{{long}}, {{short}}</a>
+        </li>
+        %end
+    </ul>
+
+
+  </body>
+</html>

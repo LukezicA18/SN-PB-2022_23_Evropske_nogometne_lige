@@ -1,0 +1,20 @@
+
+% rebase('osnova.html')
+
+
+<h1>To je moja spletna stran</h1>
+
+<h2>Vsi uporabniki so trenutno</h2>
+
+<ul>
+    % for up in uporabniki:
+    <div class="columns">
+        <div class="column">{{ up[0] }}</div>
+        <div class="column moja-rdeca">{{ up[1] }}</div>  <!--napišemo še moja-rdeča, najprej smo use naredili na spletni_vmesnik in style.css@bottle.route("/static/slikice/<filename>")    #ZA SLIKO
+            def serve_static_files(filename):
+                return bottle.static_file(filename, root="./static/img")-->
+        <div class="column">{{ up[2] }}</div>
+    </div>
+    <!--li> {{ up }} </li-->
+    % end
+</ul>
