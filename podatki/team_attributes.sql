@@ -1,16 +1,14 @@
 --
--- File generated with SQLiteStudio v3.3.3 on tor. feb. 14 00:57:06 2023
+-- File generated with SQLiteStudio v3.3.3 on čet. feb. 16 03:40:44 2023
 --
 -- Text encoding used: UTF-8
 --
--- Results of query:
--- SELECT * FROM Team_Attributes 
--- WHERE Team_Attributes.team_api_id IN (SELECT DISTINCT Team.team_api_id FROM Team JOIN Team_Attributes ON Team.team_api_id = Team_Attributes.team_api_id
--- WHERE (Team.id > 2510 AND Team.id < 26547) OR (Team.id > 41673 AND Team.id < 49115)) AND date > '2015-01-01 00:00:00'
---
+PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
 
-CREATE TABLE Team_Attributes (id, team_fifa_api_id, team_api_id, date, buildUpPlaySpeed, buildUpPlaySpeedClass, buildUpPlayDribbling, buildUpPlayDribblingClass, buildUpPlayPassing, buildUpPlayPassingClass, buildUpPlayPositioningClass, chanceCreationPassing, chanceCreationPassingClass, chanceCreationCrossing, chanceCreationCrossingClass, chanceCreationShooting, chanceCreationShootingClass, chanceCreationPositioningClass, defencePressure, defencePressureClass, defenceAggression, defenceAggressionClass, defenceTeamWidth, defenceTeamWidthClass, defenceDefenderLineClass);
+-- Table: Team_Attributes
+--DROP TABLE IF EXISTS Team_Attributes;
+CREATE TABLE Team_Attributes (id INTEGER PRIMARY KEY, team_fifa_api_id INTEGER REFERENCES Team (team_fifa_api_id), team_api_id INTEGER REFERENCES Team (team_api_id), date TEXT, buildUpPlaySpeed INTEGER, buildUpPlaySpeedClass TEXT, buildUpPlayDribbling INTEGER, buildUpPlayDribblingClass TEXT, buildUpPlayPassing INTEGER, buildUpPlayPassingClass TEXT, buildUpPlayPositioningClass TEXT, chanceCreationPassing INTEGER, chanceCreationPassingClass TEXT, chanceCreationCrossing INTEGER, chanceCreationCrossingClass TEXT, chanceCreationShooting INTEGER, chanceCreationShootingClass TEXT, chanceCreationPositioningClass TEXT, defencePressure INTEGER, defencePressureClass TEXT, defenceAggression INTEGER, defenceAggressionClass TEXT, defenceTeamWidth INTEGER, defenceTeamWidthClass TEXT, defenceDefenderLineClass TEXT);
 INSERT INTO Team_Attributes (id, team_fifa_api_id, team_api_id, date, buildUpPlaySpeed, buildUpPlaySpeedClass, buildUpPlayDribbling, buildUpPlayDribblingClass, buildUpPlayPassing, buildUpPlayPassingClass, buildUpPlayPositioningClass, chanceCreationPassing, chanceCreationPassingClass, chanceCreationCrossing, chanceCreationCrossingClass, chanceCreationShooting, chanceCreationShootingClass, chanceCreationPositioningClass, defencePressure, defencePressureClass, defenceAggression, defenceAggressionClass, defenceTeamWidth, defenceTeamWidthClass, defenceDefenderLineClass) VALUES (15, 614, 8576, '2015-09-10 00:00:00', 59, 'Balanced', 57, 'Normal', 52, 'Mixed', 'Organised', 48, 'Normal', 38, 'Normal', 52, 'Normal', 'Organised', 38, 'Medium', 47, 'Press', 53, 'Normal', 'Cover');
 INSERT INTO Team_Attributes (id, team_fifa_api_id, team_api_id, date, buildUpPlaySpeed, buildUpPlaySpeedClass, buildUpPlayDribbling, buildUpPlayDribblingClass, buildUpPlayPassing, buildUpPlayPassingClass, buildUpPlayPositioningClass, chanceCreationPassing, chanceCreationPassingClass, chanceCreationCrossing, chanceCreationCrossingClass, chanceCreationShooting, chanceCreationShootingClass, chanceCreationPositioningClass, defencePressure, defencePressureClass, defenceAggression, defenceAggressionClass, defenceTeamWidth, defenceTeamWidthClass, defenceDefenderLineClass) VALUES (21, 47, 8564, '2015-09-10 00:00:00', 48, 'Balanced', 70, 'Lots', 52, 'Mixed', 'Organised', 66, 'Normal', 36, 'Normal', 69, 'Lots', 'Organised', 58, 'Medium', 57, 'Press', 49, 'Normal', 'Cover');
 INSERT INTO Team_Attributes (id, team_fifa_api_id, team_api_id, date, buildUpPlaySpeed, buildUpPlaySpeedClass, buildUpPlayDribbling, buildUpPlayDribblingClass, buildUpPlayPassing, buildUpPlayPassingClass, buildUpPlayPositioningClass, chanceCreationPassing, chanceCreationPassingClass, chanceCreationCrossing, chanceCreationCrossingClass, chanceCreationShooting, chanceCreationShootingClass, chanceCreationPositioningClass, defencePressure, defencePressureClass, defenceAggression, defenceAggressionClass, defenceTeamWidth, defenceTeamWidthClass, defenceDefenderLineClass) VALUES (45, 1861, 9865, '2015-09-10 00:00:00', 46, 'Balanced', 41, 'Normal', 65, 'Mixed', 'Organised', 57, 'Normal', 54, 'Normal', 40, 'Normal', 'Organised', 37, 'Medium', 53, 'Press', 45, 'Normal', 'Cover');
