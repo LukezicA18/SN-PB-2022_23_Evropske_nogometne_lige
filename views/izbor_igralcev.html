@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Poišči igralca</title>
+    <style>
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          z-index: 1;
+          background-color: hsl(0, 0%, 100%);
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        }
+    
+        .dropdown:hover .dropdown-content {
+          display: block;
+        }
+    
+        .checkbox-label {
+          display: block;
+          padding: 5px 10px;
+        }
+      </style>
+  </head>
+  <body>
+
+    <ol>
+        %for ig in moji_igralci:
+        <li>{{ig}}</li>
+        %end
+    </ol>
+
+    <h1>Poišči igralca</h1>
+    <form action="/naredi_ekipo" method="post">
+      <!--ce hoces tocno dolocenega-->
+      <label for="igralec">Ime igralca:</label>
+      <input type="text" id="igralec" name="igralec" placeholder="Vnesi ime igralca">    <!--placeholder pokaze v boxu neko besedilo, id, name ne vem cisto tocno-->
+      
+      <!--filtriramo glede na pozicijo-->
+        <input type="checkbox" id="vratar" name="vratar" value="vratar" checked>
+        <label for="vratar">Vratar</label>
+        <input type="checkbox" id="branilec" name="branilec" value="branilec" checked>
+        <label for="branilec">Branilec</label>
+        <input type="checkbox" id="vezist" name="vezist" value="vezist" checked>
+        <label for="vezist">Vezist</label>
+        <input type="checkbox" id="napadalec" name="napadalec" value="napadalec" checked>
+        <label for="napadalec">Napadalec</label>
+        
+        <button type="submit">Search</button> 
+        
+    </form>
+
+    <ol>
+        %for (id, igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, _, polozaj_y, rating) in igralci:
+        <li>ime: {{igralec}}, rojen: {{datum_rojstva}}, budala: {{ekipa_dolgo}}, {{ekipa_kratko}}, {{poz[polozaj_y]}}, rating: {{rating}}, cena: {{f_cena(rating)}} 
+            <form action="{{f"kupi/{id}"}}" method="post">
+                <button type="submit">kupi</button>
+            </form>
+        </li>
+        %end
+    </ol>
+
+
+    
+  </body>
+</html>
+

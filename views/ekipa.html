@@ -3,8 +3,8 @@
   <body>
     <h1>{{ime_ekipe}}</h1>
     <ol>
-      %for (igralec,) in igralci:
-      <li>{{igralec}}</li>
+      %for (igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, polozaj_x, polozaj_y) in igralci:
+      <li>{{igralec}}, {{datum_rojstva}}, {{ekipa_dolgo}}, {{ekipa_kratko}}, {{polozaj_x}}, {{polozaj_y}}</li>
       %end
     </ol>
   </body>

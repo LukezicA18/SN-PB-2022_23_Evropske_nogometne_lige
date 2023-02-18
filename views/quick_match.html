@@ -1,0 +1,43 @@
+
+<div>
+
+    <form action="/quick_match" method="post">
+      <label for="home_team">home</label>
+      <select name="home_team" id="home_team">
+        <option value="10194">ekipa 1</option>
+        <option value="10260">ime ekipe 2</option>
+      </select>
+      <label for="away_team">home</label>
+      <select name="away_team" id="away_team" >
+        <option value="10194">ekipa 1</option>
+        <option value="10260">ime ekipe 2</option>
+      </select>
+      <button type="submit">prikazi igralce ekip</button>
+    </form>
+
+    % if home_igralci != []:
+
+    <form action="/simuliraj_tekmo" method="post">
+        <h2>Home team</h2>
+        <ol>
+            %for (id, igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, _, polozaj_y, rating) in home_igralci:
+            <li>{{igralec}}, rojen: {{datum_rojstva}}, {{ekipa_dolgo}}, {{ekipa_kratko}}, {{poz[polozaj_y]}}, rating: {{rating}}
+                <!-- TODO dodaj checkbok genericno -->
+            </li>
+            %end
+        </ol>
+    
+        <h2>Away team</h2>
+        <ol>
+            %for (id, igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, _, polozaj_y, rating) in away_igralci:
+            <li>{{igralec}}, rojen: {{datum_rojstva}}, {{ekipa_dolgo}}, {{ekipa_kratko}}, {{poz[polozaj_y]}}, rating: {{rating}}
+                <!-- TODO dodaj checkbok genericno -->
+            </li>
+            %end
+        </ol>
+        <button type="submit">Odigraj tekmo</button>
+        %end
+
+    </form>
+
+</div>
