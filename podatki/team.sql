@@ -57,12 +57,12 @@ INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, 
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15621, 7809, 10189, 34, 'FC Schalke 04', 'S04');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15622, 7809, 9904, 485, 'Hannover 96', 'HAN');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15623, 7809, 8721, 175, 'VfL Wolfsburg', 'WOL');
-INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15624, 7809, 8722, 31, '1. FC Köln', 'FCK');
+INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15624, 7809, 8722, 31, '1. FC Koln', 'FCK');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15625, 7809, 9810, 1824, 'Eintracht Frankfurt', 'EFR');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15626, 7809, 8177, 166, 'Hertha BSC Berlin', 'HBE');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15628, 7809, 8697, 38, 'SV Werder Bremen', 'WBR');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15630, 7809, 8226, 10029, 'TSG 1899 Hoffenheim', 'HOF');
-INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15631, 7809, 9788, 23, 'Borussia Mönchengladbach', 'GLA');
+INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15631, 7809, 9788, 23, 'Borussia Monchengladbach', 'GLA');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (15632, 7809, 10269, 36, 'VfB Stuttgart', 'STU');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (16243, 7809, 9905, 169, '1. FSV Mainz 05', 'MAI');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (17465, 7809, 8406, 100409, 'FC Augsburg', 'AUG');

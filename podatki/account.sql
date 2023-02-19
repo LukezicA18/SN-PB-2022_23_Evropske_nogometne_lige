@@ -10,7 +10,7 @@ CREATE TABLE Account (
     budget INTEGER,
     team_id INTEGER REFERENCES Team (team_api_id)
 );
-INSERT INTO Account (id, username, password, budget, team_id) VALUES (1, 'racun', 'nimamgesla', 500000000, 500000);
+INSERT INTO Account (id, username, password, budget, team_id) VALUES (1, 'racun', 'nimamgesla', 500, 500000);
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;

@@ -8,7 +8,7 @@ BEGIN TRANSACTION;
 
 -- Table: Player
 --DROP TABLE IF EXISTS Player;
-CREATE TABLE Player (id INTEGER PRIMARY KEY, player_api_id INTEGER UNIQUE, player_name TEXT, player_fifa_api_id INTEGER UNIQUE, birthday TEXT, team_id INTEGER REFERENCES Team (team_api_id), player_coordinate_x INTEGER, player_coordinate_y INTEGER);
+CREATE TABLE Player (id INTEGER PRIMARY KEY, player_api_id INTEGER, player_name TEXT, player_fifa_api_id INTEGER UNIQUE, birthday TEXT, team_id INTEGER REFERENCES Team (team_api_id), player_coordinate_x INTEGER, player_coordinate_y INTEGER);
 INSERT INTO Player (id, player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y) VALUES (2, 155782, 'Aaron Cresswell', 189615, '1989-12-15 00:00:00', 8654, 6, 3);
 INSERT INTO Player (id, player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y) VALUES (6, 27316, 'Aaron Hunt', 158138, '1986-09-04 00:00:00', 9790, 5, 8);
 INSERT INTO Player (id, player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y) VALUES (8, 30895, 'Aaron Lennon', 152747, '1987-04-16 00:00:00', 8668, 3, 8);

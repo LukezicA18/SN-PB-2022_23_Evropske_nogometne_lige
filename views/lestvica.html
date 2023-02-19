@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html>
-  <body>
+% rebase('base.html')
 
-    <h1>Lestvica</h1>
-    <ol>
-      %for ekipa in ekipe:
-      <li>{{ekipa}}</li>
-      %end
-    </ol>
-
-  </body>
-</html>
+<h1>Lestvica</h1>
+<ol>
+  %for ekipa in ekipe:
+  <li>{{ekipa}}</li>
+  %end
+</ol>
 
 <!-- 
-
     <ul>
         %for long, short in ekipe:
         <li>

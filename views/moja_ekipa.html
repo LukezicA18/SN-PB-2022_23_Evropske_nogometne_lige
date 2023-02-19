@@ -1,10 +1,26 @@
 % rebase('base.html')
 
-<h1>Moja ekipa: {{ime_ekipe}}</h1>
-<ol>
-    %for ig in moji_igralci:
-    <li>{{ig}}</li>
+<h1>Ime ekipe: {{ime_ekipe[0]}}</h1>   <!-- Z [0] extractamo tuple-->
+
+<table>
+    <tr>
+      <td>Igralec</td>
+      <td>Datum rojstva</td>
+      <td>Igralni položaj</td>
+      <td>FIFA ocena</td>
+      <td>Boljša noga</td>
+      <td>Cena (v mllionih)</td>
+    </tr>
+    %for (id, team_id, igralec, datum_rojstva, polozaj_y, rating, boljsa_noga) in igralci:
+    <tr>
+      <td>{{igralec}}</td>
+      <td>{{datum_rojstva}}</td>
+      <td>{{poz[polozaj_y]}}</td>
+      <td>{{rating}}</td>
+      <td>{{boljsa_noga}}</td>
+      <td>{{f_cena(rating)}}</td>
+    </tr>
     %end
-</ol>
+  </table>
 
 
