@@ -11,11 +11,13 @@ POZICIJE = {1:"vratar", 2:"branilec", 3:"branilec", 4:"branilec", 5:"branilec", 
 # funkciji moji_igralci() in ime_moje_ekipe uporabimo za prikaz prve strani
 def moji_igralci():
     moja_ekipa_id = 50000
-    s = f"""SELECT Player.player_api_id, Player.team_id, Player.player_name, DATE(Player.birthday) AS birthday, Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot FROM Player 
+    s = f"""SELECT Player.player_api_id, Player.team_id, Player.player_name, DATE(Player.birthday) AS birthday, Player.player_coordinate_y,
+    Player_Attributes.overall_rating, Player_Attributes.preferred_foot, Player_Attributes.player_cost FROM Player 
     JOIN Team ON Player.team_id = Team.team_api_id 
     JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
     WHERE Player.player_name IN (SELECT player_name FROM Player WHERE team_id = {moja_ekipa_id}) AND team_id != {moja_ekipa_id}
     ORDER BY Player_Attributes.overall_rating DESC;"""
+    # DATE(Player.birthday) AS birthday -----> tako vzamemo samo datum in ne tudi ure (00:... ne bo napisano)
     cur.execute(s)
     moji_igralci = cur.fetchall()
     return moji_igralci
@@ -171,31 +173,9 @@ def vse_tekme_v_sezoni(league_id, season, stage=100):
 #############################################
 
 
+#################### nakup_igralcev
 
-def igralci_v_ekipi(team):
-    # TODO pogruntaj zakaj select ne vrne igralcev za mojo ekipo
-    s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
-    JOIN Team ON Player.team_id = Team.team_api_id 
-    JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
-    WHERE Player.team_id = {team}
-    ORDER BY Player_Attributes.overall_rating DESC;"""
-    cur.execute(s) 
-    res = cur.fetchall()
-    return res
-
-
-
-
-
-def ekipa_model(ime_ekipe):
-    s = f"""SELECT Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y FROM Player 
-            JOIN Team ON Player.team_id = Team.team_api_id WHERE Team.team_long_name = '{ime_ekipe}';"""
-    res = cur.execute(s) 
-    igralci = res.fetchall()
-    return ime_ekipe, igralci
-
-
-def seznam_igralcev_za_prikaz(ime_igralca, vratar, branilec, vezist, napadalec):
+def seznam_igralcev_za_prikaz(ime_igralca, vratar, branilec, vezist, napadalec, klub, manj20, manj40, manj60, manj80, manj100):
     moja_ekipa_id = 50000
     polozaji = []
     if vratar != None:
@@ -210,82 +190,117 @@ def seznam_igralcev_za_prikaz(ime_igralca, vratar, branilec, vezist, napadalec):
         polozaji = f"({polozaji[0]})"
     else:
         polozaji = tuple(polozaji)
+    
+    max_cena = 1000  #zelo_veliko
+    if manj100 != None:
+        max_cena = 100
+    elif manj80 != None:
+        max_cena = 80
+    elif manj60 != None:
+        max_cena = 60
+    elif manj40 != None:
+        max_cena = 40
+    elif manj20 != None:
+        max_cena = 20
 
-    s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
+    s = f"""SELECT Player.player_api_id, Player.player_name, DATE(Player.birthday) AS birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, 
+    Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot, Player_Attributes.player_cost FROM Player 
     JOIN Team ON Player.team_id = Team.team_api_id 
     JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
-    WHERE Player.player_coordinate_y in {polozaji} AND Player.player_name like '%{ime_igralca}%' AND Player.team_id != {moja_ekipa_id}
+    WHERE Player.player_coordinate_y in {polozaji} AND Player.player_name like '%{ime_igralca}%' AND Team.team_long_name like '%{klub}%' AND Player_Attributes.player_cost <= {max_cena} AND Player.team_id != {moja_ekipa_id}
     ORDER BY Player_Attributes.overall_rating DESC;"""
     res = cur.execute(s) 
     sez_igralcev = res.fetchall()
     return sez_igralcev
 
-# SELECT overall_rating, overall_rating + (overall_rating - 75) + 10 AS player_cost FROM Player_Attributes
-# WHERE overall_rating > 70;
-# def koliko_denarja():
-#     budget = 1000000  # initial budget
-#     player_cost = 50000  # cost of the player to be bought
-
-# # check if the budget is sufficient to buy the player
-#     if player_cost <= budget:
-#         budget -= player_cost
-#         print(f"Player bought for {player_cost}. Budget left: {budget}")
-#     else:
-#         print(f"Not enough budget to buy player. Budget left: {budget}")
-
-
-# from flask import Flask, render_template
-# import sqlite3
-
-# app = Flask(__name__)
-
 
 def denar_na_zacetku():
     moja_ekipa_id = 50000
-    s = f"SELECT budget FROM Account WHERE id = {moja_ekipa_id}"
+    s = f"SELECT budget FROM Account WHERE team_id = {moja_ekipa_id};"
     res = cur.execute(s)
-    zacetni_budget = 500 ####res.fetchone()[0]
+    print(res)
+    zacetni_budget = res.fetchone()[0]
+    print(zacetni_budget)
+    #print(zacetni_budget)
     return zacetni_budget
 
-# @app.route('/')
-# def index():
-#     return render_template('index.html', budget=zacetni_budget)
 
-# @app.route('/buy/<player_id>')
-# def buy_player(player_id):
-#     # query database to retrieve cost of player
-#     cursor.execute("SELECT cost FROM players WHERE id = ?", (player_id,))
-#     cost = cursor.fetchone()[0]
-
-#     # subtract cost from budget and update in database
-#     new_budget = starting_budget - cost
-#     cursor.execute("UPDATE mytable SET budget = ? WHERE id = 1", (new_budget,))
-#     conn.commit()
-
-#     return render_template('index.html', budget=new_budget)
-
-# @app.route('/sell/<player_id>')
-# def sell_player(player_id):
-#     # query database to retrieve cost of player
-#     cursor.execute("SELECT cost FROM players WHERE id = ?", (player_id,))
-#     cost = cursor.fetchone()[0]
-
-#     # add cost to budget and update in database
-#     new_budget = starting_budget + cost
-#     cursor.execute("UPDATE mytable SET budget = ? WHERE id = 1", (new_budget,))
-#     conn.commit()
-
-#     return render_template('index.html', budget=new_budget)
-
-# if __name__ == '__main__':
-
-
-def f_cena(r):
-    r = int(r) if r != None else 1
-    if r > 70:
-        return r + 10
+def kupi(igralec_id):
+    moja_ekipa_id = 50000
+    zacetni_budget = denar_na_zacetku()
+    s = f"""SELECT Player.player_api_id, Player.team_id, Player.player_name, DATE(Player.birthday) AS birthday, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot, Player_Attributes.player_cost FROM Player 
+    JOIN Team ON Player.team_id = Team.team_api_id 
+    JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
+    WHERE Player.player_api_id = {igralec_id}
+    ORDER BY Player_Attributes.overall_rating DESC;"""
+    cur.execute(s)
+    player_api_id, team_id, player_name, birthday, player_coordinate_x, player_coordinate_y, overall_rating, preferred_foot, cena = tuple(cur.fetchone())
+    # TODO preveri ce je ta igralec ze med kupljenimi
+    s = f"SELECT COUNT(*) FROM Player WHERE team_id = {moja_ekipa_id} AND player_api_id = {player_api_id};"
+    cur.execute(s)
+    stevilo_enakih_v_moji_ekipi = cur.fetchone()[0]
+    if stevilo_enakih_v_moji_ekipi != 0:
+        raise Exception("Igralec je ze v MojaEkipa")
+    # preverimo ce imamo dovolj denarja 
+    if cena <= zacetni_budget:
+        # izracunamo koliko denarja nam ostane
+        nov_budget = zacetni_budget - cena
+        cur.execute(f"UPDATE Account SET budget = {nov_budget} WHERE team_id = {moja_ekipa_id}")
+        s = f"""
+            INSERT INTO Player
+            (player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y) 
+            VALUES ({player_api_id}, '{player_name}', (SELECT MAX(player_fifa_api_id)+1 FROM Player), '{birthday}', 50000, {player_coordinate_x}, {player_coordinate_y});
+            """ 
+    #ce nimmo dovolj denarja
     else:
-        return r - 10
+        raise RuntimeError("Ni dovolj denarja.")
+    cur.execute(s)
+    con.commit()
+
+
+def prodaj(igralec_id):
+    moja_ekipa_id = 50000
+    zacetni_budget = denar_na_zacetku()
+    s = f"""SELECT Player_Attributes.player_cost FROM Player 
+    JOIN Team ON Player.team_id = Team.team_api_id 
+    JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
+    WHERE Player.player_api_id = {igralec_id}
+    ORDER BY Player_Attributes.overall_rating DESC;"""
+    #Player.player_api_id, Player.team_id, Player.player_name, DATE(Player.birthday) AS birthday, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot,
+    cur.execute(s)
+    cena, = tuple(cur.fetchone())
+    #player_api_id, team_id, player_name, birthday, player_coordinate_x, player_coordinate_y, overall_rating, preferred_foot, 
+    # TODO preveri ce je ta igralec ze med kupljenimi, ce ni ga ne mores prodati!!!
+
+    nov_budget = zacetni_budget + cena
+    cur.execute(f"UPDATE Account SET budget = {nov_budget} WHERE team_id = {moja_ekipa_id}")
+    s = f"DELETE FROM Player WHERE player_api_id = {igralec_id} AND team_id = {moja_ekipa_id};" 
+    cur.execute(s)
+    con.commit()
+
+# da vidimo, koliko imamo trenutno denarja
+def koliko_denarja():
+    moja_ekipa_id = 50000
+    s = f"SELECT budget FROM Account WHERE team_id = {moja_ekipa_id};"
+    cur.execute(s)
+    trenutni_budget = cur.fetchone() #dobimo tuple. V htmlju je treba extractat potem prvi element (ki je v tem primeru MojaEkipa)
+    return trenutni_budget
+
+# da vidimo koliko igralcev je trenutno v nasi ekipi
+def stevilo_igralcev_v_ekipi():
+    moja_ekipa_id = 50000
+    s = f"SELECT COUNT(*) FROM Player WHERE team_id = {moja_ekipa_id};"
+    cur.execute(s)
+    stevilo_igralcev = cur.fetchone()
+    return stevilo_igralcev
+
+
+# def f_cena(r):
+#     r = int(r) if r != None else 1
+#     if r > 70:
+#         return r + 10
+#     else:
+#         return r - 10
 
 
 # def kupi(igralec_id):
@@ -300,60 +315,28 @@ def f_cena(r):
 #     """ 
 #     cur.execute(s)
 #     con.commit()
+####################################
 
-# moja_ekipa_id = 50000
-#     s = f"""SELECT Player.player_api_id, Player.team_id, Player.player_name, DATE(Player.birthday) AS birthday, Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot FROM Player 
-#     JOIN Team ON Player.team_id = Team.team_api_id 
-#     JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
-#     WHERE Player.player_name IN (SELECT player_name FROM Player WHERE team_id = {moja_ekipa_id}) AND team_id != {moja_ekipa_id}
-#     ORDER BY Player_Attributes.overall_rating DESC;"""
-#     cur.execute(s)
-#     moji_igralci = cur.fetchall()
 
-def kupi(igralec_id):
-    moja_ekipa_id = 500000
-    zacetni_budget = denar_na_zacetku()
-    s = f"""SELECT Player.player_api_id, Player.team_id, Player.player_name, DATE(Player.birthday) AS birthday, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot, Player_Attributes.player_cost FROM Player 
+def igralci_v_ekipi(team):
+    # TODO pogruntaj zakaj select ne vrne igralcev za mojo ekipo
+    s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
     JOIN Team ON Player.team_id = Team.team_api_id 
     JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
-    WHERE Player.player_api_id = {igralec_id}
+    WHERE Player.team_id = {team}
     ORDER BY Player_Attributes.overall_rating DESC;"""
-    cur.execute(s)
-    player_api_id, team_id, player_name, birthday, player_coordinate_x, player_coordinate_y, overall_rating, preferred_foot, cena = tuple(cur.fetchone())
-    # TODO preveri ce je ta igralec ze med kupljenimi
-    # TODO denar se mora odsteti od budgeta
-    nov_budget = zacetni_budget - cena
-    cur.execute(f"UPDATE Account SET budget = {nov_budget} WHERE team_id = {moja_ekipa_id}")
+    cur.execute(s) 
+    res = cur.fetchall()
+    return res
 
-    s = f"""
-        INSERT INTO Player
-        (player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y) 
-        VALUES ({player_api_id}, '{player_name}', (SELECT MAX(player_fifa_api_id)+1 FROM Player), '{birthday}', 50000, {player_coordinate_x}, {player_coordinate_y});
-    """ 
-    cur.execute(s)
-    con.commit()
 
-# @app.route('/buy/<player_id>')
-# def buy_player(player_id):
-#     # query database to retrieve cost of player
-#     cursor.execute("SELECT cost FROM players WHERE id = ?", (player_id,))
-#     cost = cursor.fetchone()[0]
 
-#     # subtract cost from budget and update in database
-#     new_budget = starting_budget - cost
-#     cursor.execute("UPDATE mytable SET budget = ? WHERE id = 1", (new_budget,))
-#     conn.commit()
-
-#     return render_template('index.html', budget=new_budget)
-
-def prodaj(igralec_id):
-    moja_ekipa_id = 50000
-    # TODO preveri ce je ta igralec ze med kupljenimi, ce ni ga ne mores prodati!!!
-    # TODO denar se mora odsteti od budgeta
-    s = f"DELETE FROM Player WHERE player_api_id = {igralec_id} AND team_id = {moja_ekipa_id};" 
-    cur.execute(s)
-    con.commit()
-
+def ekipa_model(ime_ekipe):
+    s = f"""SELECT Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y FROM Player 
+            JOIN Team ON Player.team_id = Team.team_api_id WHERE Team.team_long_name = '{ime_ekipe}';"""
+    res = cur.execute(s) 
+    igralci = res.fetchall()
+    return ime_ekipe, igralci
 
 def f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev):
     s_home = f"""
@@ -372,7 +355,7 @@ def f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev)
     away_rating = sum(x[0] for x in vsi)
     print(home_rating, away_rating)
     smiselni_rezultati = ["0 : 0", "0 : 1", "0 : 2", "0 : 3", "1 : 0", "1 : 1", "1 : 2", "1 : 3", "2 : 0", "2 : 1", "2 : 2", "2 : 3", "3 : 0", "3 : 1", "3 : 2", "3 : 3"] 
-    return random.choice(smiselni_rezultati) + f" home rating:{home_rating}, away rating:{away_rating}"
+    return "2:1"  #random.choice(smiselni_rezultati) + f" home rating:{home_rating}, away rating:{away_rating}"
 
 
 # import sqlite3

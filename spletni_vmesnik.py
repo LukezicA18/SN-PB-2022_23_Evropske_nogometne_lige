@@ -47,7 +47,9 @@ def do_lestvica():
 @get('/naredi_ekipo')
 def naredi_ekipo():
     moji_igralci = model.moji_igralci()
-    return template("izbor_igralcev.html", moji_igralci=moji_igralci, igralci=[], poz=model.POZICIJE, f_cena=model.f_cena, url=bottle.url)
+    vsota_denarja = model.koliko_denarja()
+    stevilo_igralcev = model.stevilo_igralcev_v_ekipi()
+    return template("izbor_igralcev.html", denar = vsota_denarja, stevilo_igralcev = stevilo_igralcev, moji_igralci=moji_igralci, igralci=[], poz=model.POZICIJE,  url=bottle.url)
 
 
 @post('/naredi_ekipo')
@@ -57,8 +59,18 @@ def sestavi_ekipo():
     branilec = request.forms.get('branilec')
     vezist = request.forms.get('vezist')
     napadalec = request.forms.get('napadalec')
-    sez_igralcev = model.seznam_igralcev_za_prikaz(ime_igralca, vratar, branilec, vezist, napadalec)
-    return template("izbor_igralcev.html", moji_igralci=[], igralci = sez_igralcev, poz=model.POZICIJE, f_cena=model.f_cena, url=bottle.url)
+    klub = request.forms.get('klub')
+    # filtriramo glede na ceno
+    manj20 = request.forms.get('manj20')
+    manj40 = request.forms.get('manj40')
+    manj60 = request.forms.get('manj60')
+    manj80 = request.forms.get('manj80')
+    manj100 = request.forms.get('manj100')
+
+    sez_igralcev = model.seznam_igralcev_za_prikaz(ime_igralca, vratar, branilec, vezist, napadalec, klub, manj20, manj40, manj60, manj80, manj100)
+    vsota_denarja = model.koliko_denarja()
+    stevilo_igralcev = model.stevilo_igralcev_v_ekipi()
+    return template("izbor_igralcev.html", denar = vsota_denarja, stevilo_igralcev = stevilo_igralcev, moji_igralci=[], igralci = sez_igralcev, poz=model.POZICIJE, url=bottle.url)
 
 @post('/kupi/<igralec_id>')
 def kupi(igralec_id):
@@ -123,7 +135,7 @@ def simuliraj_tekmo():
     if len(seznam_away_igralcev) != 11: return "V gostojoči ekipi ni 11 igralcev"
 
     res = model.f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev)
-    return 
+    return #res
 
 
 
