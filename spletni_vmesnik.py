@@ -10,7 +10,7 @@ import sqlite3
 def index():
     moji_igralci = model.moji_igralci()
     ime_ekipe = model.ime_moje_ekipe()
-    return template("moja_ekipa.html", igralci=moji_igralci, ime_ekipe=ime_ekipe, poz = model.POZICIJE, f_cena = model.f_cena)  #f_cena tukaj ne pisemo kot funkcije, ne dodamo ()
+    return template("moja_ekipa.html", igralci=moji_igralci, ime_ekipe=ime_ekipe, poz = model.POZICIJE) #f_cena = model.f_cena)  #f_cena tukaj ne pisemo kot funkcije, ne dodamo ()
 
 
 ####### pregled baze
@@ -27,7 +27,7 @@ def pregled_baze():
 
 @get('/lestvica')
 def izberi_lestvico():
-    return template("liga.html", lestvica=[])
+    return template("liga.html", lestvica=[], liga = "")
 
 @post('/lestvica')
 def do_lestvica():
@@ -35,8 +35,8 @@ def do_lestvica():
     sezona = request.forms.get('sezona')
     krog = int(request.forms.get('krog'))
     lest_sortirana = model.naredi_lestvico(league_id, sezona, krog)
-    print(lest_sortirana)
-    return template("liga.html", lestvica=lest_sortirana)
+    liga = model.id_lige_v_ime(league_id)   #da lahko damo naslov (napisemo kakatero lestvico gledamo)
+    return template("liga.html", lestvica=lest_sortirana, liga = liga)
 
 
 
@@ -95,7 +95,8 @@ def load_quick_match():
     # TODO naj to bere iz drop down menija ali pa da pises ime ekipe in ti ponuja izbira (se bom se odlocil)
     home_team = request.forms.get('home_team')
     away_team = request.forms.get('away_team')
-    return template("quick_match.html", home_igralci=[], away_igralci=[], poz=model.POZICIJE)
+    vse_ekipe = model.vse_ekipe()
+    return template("quick_match.html", home_igralci=[], away_igralci=[], vse_ekipe = vse_ekipe, poz=model.POZICIJE)  # vse ekipe trenutno ne bi rabil, ker nekaj ne dela
 
 
 @post('/quick_match')
@@ -106,10 +107,15 @@ def load_quick_match():
     away_team = request.forms.get('away_team')
 
     home_igralci, away_igralci = model.igralci_v_ekipi(home_team), model.igralci_v_ekipi(away_team)
+    vse_ekipe = model.vse_ekipe()
 
-    return template("quick_match.html", home_igralci=home_igralci, away_igralci=away_igralci, poz=model.POZICIJE)
+    domaci_ime = model.id_ekipe_v_ime(home_team)
+    gostje_ime = model.id_ekipe_v_ime(away_team)
+
+    return template("quick_match.html", home_igralci=home_igralci, away_igralci=away_igralci, vse_ekipe =vse_ekipe, domaci = domaci_ime, gostje = gostje_ime, poz=model.POZICIJE)   # vse ekipe trenutno ne bi rabil, ker nekaj ne dela
 
 # TODO naredi tako da lahko izberes igralce in dodaj gumb odigraj tekmo
+
 
 
 # @post('/simuliraj_tekmo')
@@ -135,7 +141,7 @@ def simuliraj_tekmo():
     if len(seznam_away_igralcev) != 11: return "V gostojoči ekipi ni 11 igralcev"
 
     res = model.f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev)
-    return #res
+    return res
 
 
 

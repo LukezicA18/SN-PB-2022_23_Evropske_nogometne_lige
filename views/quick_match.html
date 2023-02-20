@@ -1,40 +1,295 @@
 % rebase('base.html')
-<div>
 
+
+<style>                               <!--malo lepse oblikujemo tabele-->
+    table { 
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+  </style>
+
+<div>
     <form action="/quick_match" method="post">
-      <label for="home_team">home</label>
-      <select name="home_team" id="home_team">
-        <option value="50000">ekipa 1</option>
-        <option value="10260">ime ekipe 2</option>
-      </select>
-      <label for="away_team">home</label>
-      <select name="away_team" id="away_team" >
-        <option value="10194">ekipa 1</option>
-        <option value="10260">ime ekipe 2</option>
-      </select>
-      <button type="submit">prikazi igralce ekip</button>
-    </form>
+        <label for="home_team">home</label>
+        <select name="home_team" id="home_team">
+            <option value=50000>MojaEkipa</option>
+            <option value=8722>1. FC Koln</option>
+            <option value=9905>1. FSV Mainz 05</option>
+            <option value=9829>AS Monaco</option>
+            <option value=9853>AS Saint-Etienne</option>
+            <option value=8121>Angers SCO</option>
+            <option value=9825>Arsenal</option>
+            <option value=10252>Aston Villa</option>
+            <option value=8524>Atalanta</option>
+            <option value=8315>Athletic Club de Bilbao</option>
+            <option value=9906>Atletico Madrid</option>
+            <option value=8178>Bayer 04 Leverkusen</option>
+            <option value=9857>Bologna</option>
+            <option value=9789>Borussia Dortmund</option>
+            <option value=9788>Borussia Monchengladbach</option>
+            <option value=8678>Bournemouth</option>
+            <option value=208931>Carpi</option>
+            <option value=8455>Chelsea</option>
+            <option value=8533>Chievo Verona</option>
+            <option value=9826>Crystal Palace</option>
+            <option value=10242>ES Troyes AC</option>
+            <option value=9810>Eintracht Frankfurt</option>
+            <option value=8534>Empoli</option>
+            <option value=9747>En Avant de Guingamp</option>
+            <option value=8668>Everton</option>
+            <option value=8406>FC Augsburg</option>
+            <option value=8634>FC Barcelona</option>
+            <option value=9823>FC Bayern Munich</option>
+            <option value=8234>FC Ingolstadt 04</option>
+            <option value=8689>FC Lorient</option>
+            <option value=9830>FC Nantes</option>
+            <option value=10189>FC Schalke 04</option>
+            <option value=8535>Fiorentina</option>
+            <option value=9891>Frosinone</option>
+            <option value=6391>GFC Ajaccio</option>
+            <option value=10233>Genoa</option>
+            <option value=8305>Getafe CF</option>
+            <option value=9827>Girondins de Bordeaux</option>
+            <option value=7878>Granada CF</option>
+            <option value=9790>Hamburger SV</option>
+            <option value=9904>Hannover 96</option>
+            <option value=9876>Hellas Verona</option>
+            <option value=8177>Hertha BSC Berlin</option>
+            <option value=8636>Inter</option>
+            <option value=9885>Juventus</option>
+            <option value=8639>LOSC Lille</option>
+            <option value=8543>Lazio</option>
+            <option value=8197>Leicester City</option>
+            <option value=8581>Levante UD</option>
+            <option value=8650>Liverpool</option>
+            <option value=9864>Malaga CF</option>
+            <option value=8456>Manchester City</option>
+            <option value=10260>Manchester United</option>
+            <option value=8564>Milan</option>
+            <option value=10249>Montpellier Herault SC</option>
+            <option value=9875>Napoli</option>
+            <option value=10261>Newcastle United</option>
+            <option value=9850>Norwich City</option>
+            <option value=9831>OGC Nice</option>
+            <option value=9748>Olympique Lyonnais</option>
+            <option value=8592>Olympique de Marseille</option>
+            <option value=8540>Palermo</option>
+            <option value=9847>Paris Saint-Germain</option>
+            <option value=9910>RC Celta de Vigo</option>
+            <option value=9783>RC Deportivo de La Coruna</option>
+            <option value=8558>RCD Espanyol</option>
+            <option value=8370>Rayo Vallecano</option>
+            <option value=8603>Real Betis Balompie</option>
+            <option value=8633>Real Madrid CF</option>
+            <option value=8560>Real Sociedad</option>
+            <option value=9869>Real Sporting de Gijon</option>
+            <option value=8686>Roma</option>
+            <option value=7794>SC Bastia</option>
+            <option value=8372>SD Eibar</option>
+            <option value=7819>SM Caen</option>
+            <option value=8262>SV Darmstadt 98</option>
+            <option value=8697>SV Werder Bremen</option>
+            <option value=9882>Sampdoria</option>
+            <option value=7943>Sassuolo</option>
+            <option value=8302>Sevilla FC</option>
+            <option value=8466>Southampton</option>
+            <option value=9851>Stade Rennais FC</option>
+            <option value=9837>Stade de Reims</option>
+            <option value=10194>Stoke City</option>
+            <option value=8472>Sunderland</option>
+            <option value=10003>Swansea City</option>
+            <option value=8226>TSG 1899 Hoffenheim</option>
+            <option value=9804>Torino</option>
+            <option value=8586>Tottenham Hotspur</option>
+            <option value=9941>Toulouse FC</option>
+            <option value=8306>UD Las Palmas</option>
+            <option value=8600>Udinese</option>
+            <option value=10267>Valencia CF</option>
+            <option value=10269>VfB Stuttgart</option>
+            <option value=8721>VfL Wolfsburg</option>
+            <option value=10205>Villarreal CF</option>
+            <option value=9817>Watford</option>
+            <option value=8659>West Bromwich Albion</option>
+            <option value=8654>West Ham United</option>  
+        </select>
+        <label for="away_team">home</label>
+        <select name="away_team" id="away_team" >
+            <option value=50000>MojaEkipa</option>
+            <option value=8722>1. FC Koln</option>
+            <option value=9905>1. FSV Mainz 05</option>
+            <option value=9829>AS Monaco</option>
+            <option value=9853>AS Saint-Etienne</option>
+            <option value=8121>Angers SCO</option>
+            <option value=9825>Arsenal</option>
+            <option value=10252>Aston Villa</option>
+            <option value=8524>Atalanta</option>
+            <option value=8315>Athletic Club de Bilbao</option>
+            <option value=9906>Atletico Madrid</option>
+            <option value=8178>Bayer 04 Leverkusen</option>
+            <option value=9857>Bologna</option>
+            <option value=9789>Borussia Dortmund</option>
+            <option value=9788>Borussia Monchengladbach</option>
+            <option value=8678>Bournemouth</option>
+            <option value=208931>Carpi</option>
+            <option value=8455>Chelsea</option>
+            <option value=8533>Chievo Verona</option>
+            <option value=9826>Crystal Palace</option>
+            <option value=10242>ES Troyes AC</option>
+            <option value=9810>Eintracht Frankfurt</option>
+            <option value=8534>Empoli</option>
+            <option value=9747>En Avant de Guingamp</option>
+            <option value=8668>Everton</option>
+            <option value=8406>FC Augsburg</option>
+            <option value=8634>FC Barcelona</option>
+            <option value=9823>FC Bayern Munich</option>
+            <option value=8234>FC Ingolstadt 04</option>
+            <option value=8689>FC Lorient</option>
+            <option value=9830>FC Nantes</option>
+            <option value=10189>FC Schalke 04</option>
+            <option value=8535>Fiorentina</option>
+            <option value=9891>Frosinone</option>
+            <option value=6391>GFC Ajaccio</option>
+            <option value=10233>Genoa</option>
+            <option value=8305>Getafe CF</option>
+            <option value=9827>Girondins de Bordeaux</option>
+            <option value=7878>Granada CF</option>
+            <option value=9790>Hamburger SV</option>
+            <option value=9904>Hannover 96</option>
+            <option value=9876>Hellas Verona</option>
+            <option value=8177>Hertha BSC Berlin</option>
+            <option value=8636>Inter</option>
+            <option value=9885>Juventus</option>
+            <option value=8639>LOSC Lille</option>
+            <option value=8543>Lazio</option>
+            <option value=8197>Leicester City</option>
+            <option value=8581>Levante UD</option>
+            <option value=8650>Liverpool</option>
+            <option value=9864>Malaga CF</option>
+            <option value=8456>Manchester City</option>
+            <option value=10260>Manchester United</option>
+            <option value=8564>Milan</option>
+            <option value=10249>Montpellier Herault SC</option>
+            <option value=9875>Napoli</option>
+            <option value=10261>Newcastle United</option>
+            <option value=9850>Norwich City</option>
+            <option value=9831>OGC Nice</option>
+            <option value=9748>Olympique Lyonnais</option>
+            <option value=8592>Olympique de Marseille</option>
+            <option value=8540>Palermo</option>
+            <option value=9847>Paris Saint-Germain</option>
+            <option value=9910>RC Celta de Vigo</option>
+            <option value=9783>RC Deportivo de La Coruna</option>
+            <option value=8558>RCD Espanyol</option>
+            <option value=8370>Rayo Vallecano</option>
+            <option value=8603>Real Betis Balompie</option>
+            <option value=8633>Real Madrid CF</option>
+            <option value=8560>Real Sociedad</option>
+            <option value=9869>Real Sporting de Gijon</option>
+            <option value=8686>Roma</option>
+            <option value=7794>SC Bastia</option>
+            <option value=8372>SD Eibar</option>
+            <option value=7819>SM Caen</option>
+            <option value=8262>SV Darmstadt 98</option>
+            <option value=8697>SV Werder Bremen</option>
+            <option value=9882>Sampdoria</option>
+            <option value=7943>Sassuolo</option>
+            <option value=8302>Sevilla FC</option>
+            <option value=8466>Southampton</option>
+            <option value=9851>Stade Rennais FC</option>
+            <option value=9837>Stade de Reims</option>
+            <option value=10194>Stoke City</option>
+            <option value=8472>Sunderland</option>
+            <option value=10003>Swansea City</option>
+            <option value=8226>TSG 1899 Hoffenheim</option>
+            <option value=9804>Torino</option>
+            <option value=8586>Tottenham Hotspur</option>
+            <option value=9941>Toulouse FC</option>
+            <option value=8306>UD Las Palmas</option>
+            <option value=8600>Udinese</option>
+            <option value=10267>Valencia CF</option>
+            <option value=10269>VfB Stuttgart</option>
+            <option value=8721>VfL Wolfsburg</option>
+            <option value=10205>Villarreal CF</option>
+            <option value=9817>Watford</option>
+            <option value=8659>West Bromwich Albion</option>
+            <option value=8654>West Ham United</option>   
+        </select>
+        <button type="submit">prikazi igralce ekip</button>
+      </form>
+    
+
 
     % if home_igralci != []:
     <form action="/simuliraj_tekmo" method="post">
-        <h2>Home team</h2>
-        <ol>
-            %for i, (id, igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, _, polozaj_y, rating) in enumerate(home_igralci):
-            <li>{{igralec}}, rojen: {{datum_rojstva}}, {{ekipa_dolgo}}, {{ekipa_kratko}}, {{poz[polozaj_y]}}, rating: {{rating}}
-                <input type="checkbox" name="{{i}}" value="{{id}}" {{'checked' if i < 11 else ''}}>
-            </li>
-            %end
-        </ol>
+        <h2>Domaci: {{domaci}}</h2>
 
-    
-        <h2>Away team</h2>
-        <ol>
-            %for i, (id, igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, _, polozaj_y, rating) in enumerate(away_igralci):
-            <li>{{igralec}}, rojen: {{datum_rojstva}}, {{ekipa_dolgo}}, {{ekipa_kratko}}, {{poz[polozaj_y]}}, rating: {{rating}}
-              <input type="checkbox" name="{{i+30}}" value="{{id}}" {{'checked' if i < 11 else ''}}></11>
-            </li>
+    <table>
+        <tr>
+          <td></td>
+          <td>Igralec</td>
+          <td>Datum rojstva</td>
+          <td>Ime ekipe</td>
+          <td>Igralni položaj</td>
+          <td>FIFA ocena</td>
+          <td>Boljša noga</td>
+          <td>Cena(v M€)</td>
+          <td>Dodaj v prvo postavo</td>
+        </tr>
+        %for i, (id, igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, _, polozaj_y, rating, boljsa_noga, cena) in enumerate(home_igralci):
+        <tr>
+          <td>{{i+1}}</td>
+          <td>{{igralec}}</td>
+          <td>{{datum_rojstva}}</td>
+          <td>{{ekipa_dolgo}}</td>
+          <td>{{poz[polozaj_y]}}</td>
+          <td>{{rating}}</td>
+          <td>{{boljsa_noga}}</td>
+          <td>{{cena}}</td>
+          <td><input type="checkbox" name="{{i}}" value="{{id}}" {{'checked' if i < 11 else ''}}></td>
+        </tr>
+        %end
+      </table>
+
+        <h2>Gostje: {{gostje}}</h2>
+        
+        <table>
+            <tr>
+              <td></td>
+              <td>Igralec</td>
+              <td>Datum rojstva</td>
+              <td>Ime ekipe</td>
+              <td>Igralni položaj</td>
+              <td>FIFA ocena</td>
+              <td>Boljša noga</td>
+              <td>Cena(v M€)</td>
+              <td>Dodaj v prvo postavo</td>
+            </tr>
+            %for i, (id, igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, _, polozaj_y, rating, boljsa_noga, cena) in enumerate(away_igralci):
+            <tr>
+              <td>{{i+1}}</td>
+              <td>{{igralec}}</td>
+              <td>{{datum_rojstva}}</td>
+              <td>{{ekipa_dolgo}}</td>
+              <td>{{poz[polozaj_y]}}</td>
+              <td>{{rating}}</td>
+              <td>{{boljsa_noga}}</td>
+              <td>{{cena}}</td>
+              <td><input type="checkbox" name="{{i+30}}" value="{{id}}" {{'checked' if i < 11 else ''}}></td>
+            </tr>
             %end
-        </ol>
+          </table>
+
         <button type="submit">Odigraj tekmo</button>
         %end
 

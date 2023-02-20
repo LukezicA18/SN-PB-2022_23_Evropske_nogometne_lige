@@ -1,4 +1,5 @@
 import sqlite3
+import random
 
 baza = "baza_nogomet.db"
 con = sqlite3.connect(baza)
@@ -319,17 +320,55 @@ def stevilo_igralcev_v_ekipi():
 
 
 def igralci_v_ekipi(team):
-    # TODO pogruntaj zakaj select ne vrne igralcev za mojo ekipo
-    s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
+    # # TODO pogruntaj zakaj select ne vrne igralcev za mojo ekipo
+    # s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
+    # JOIN Team ON Player.team_id = Team.team_api_id 
+    # JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
+    # WHERE Player.team_id = {team}
+    # ORDER BY Player_Attributes.overall_rating DESC;"""
+    # cur.execute(s) 
+    # res = cur.fetchall()
+    # return res
+    s = f"""SELECT Player.player_api_id, Player.player_name, DATE(Player.birthday) AS birthday, Team.team_long_name, Team.team_short_name,
+    Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot,
+    Player_Attributes.player_cost FROM Player 
     JOIN Team ON Player.team_id = Team.team_api_id 
     JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
-    WHERE Player.team_id = {team}
-    ORDER BY Player_Attributes.overall_rating DESC;"""
+    WHERE Player.team_id = {team};"""
     cur.execute(s) 
     res = cur.fetchall()
     return res
 
+    # def igralci_v_ekipi(team):
+    # # TODO pogruntaj zakaj select ne vrne igralcev za mojo ekipo
+    # s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
+    # JOIN Team ON Player.team_id = Team.team_api_id 
+    # JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
+    # WHERE Player.team_id = {team}
+    # ORDER BY Player_Attributes.overall_rating DESC;"""
+    # cur.execute(s) 
+    # res = cur.fetchall()
+    # return res
 
+# to funkcijo rabim, da vidim vse ekipe in njihove id-je, tako lahko v html lazje zapisem, ni treba vsake ekipe posebej, ampak mi potem nekaj ne dela v html, tako da sem samo naredil to funkcijo v nekem drugem oknu in skopiral rezultat v html
+def vse_ekipe():
+    s = f"SELECT Team.team_api_id, Team.team_long_name FROM Team ORDER BY team_long_name;"
+    cur.execute(s)
+    ekipe =cur.fetchall()    # dobim seznam, ki ima notri tuple. Prvi element posamezneka tupla je team_id, drugi pa team_long_name
+    vse_ekipe = "\n".join([f"<option value='{ekipa[0]}'>{ekipa[1]}</option>" for ekipa in ekipe])
+    return vse_ekipe
+
+def id_ekipe_v_ime(ekipa_id):
+    s = f"SELECT team_long_name FROM Team WHERE team_api_id = {ekipa_id};"
+    cur.execute(s)
+    res = cur.fetchone()[0]
+    return res
+
+def id_lige_v_ime(liga_id):
+    s = f"SELECT name FROM League WHERE id = {liga_id};"
+    cur.execute(s)
+    res = cur.fetchone()[0]
+    return res
 
 def ekipa_model(ime_ekipe):
     s = f"""SELECT Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y FROM Player 
@@ -355,7 +394,7 @@ def f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev)
     away_rating = sum(x[0] for x in vsi)
     print(home_rating, away_rating)
     smiselni_rezultati = ["0 : 0", "0 : 1", "0 : 2", "0 : 3", "1 : 0", "1 : 1", "1 : 2", "1 : 3", "2 : 0", "2 : 1", "2 : 2", "2 : 3", "3 : 0", "3 : 1", "3 : 2", "3 : 3"] 
-    return "2:1"  #random.choice(smiselni_rezultati) + f" home rating:{home_rating}, away rating:{away_rating}"
+    return random.choice(smiselni_rezultati) + f" home rating:{home_rating}, away rating:{away_rating}"
 
 
 # import sqlite3

@@ -21,8 +21,8 @@
   </style>
 
 
-<h4>Preostanek denarja: {{denar[0]}}M €</h4>
-<h4>Stevilo igralcev v MojaEkipa: {{stevilo_igralcev[0]}}</h4>
+<h4 style="float:right;">Preostanek denarja: {{denar[0]}}M €</h4>
+<!--<h4 >Stevilo igralcev v MojaEkipa: {{stevilo_igralcev[0]}}</h4> -->
 
 <h2>Kupljeni igralci:</h2>
 
@@ -32,6 +32,7 @@
 
 <table>
     <tr>
+      <td></td>
       <td>Igralec</td>
       <td>Datum rojstva</td>
       <td>Igralni položaj</td>
@@ -40,8 +41,9 @@
       <td>Cena(v M€)</td>
       <td>Prodaj</td>
     </tr>
-    %for (id, ekipa_id, igralec, datum_rojstva, polozaj_y, rating, boljsa_noga, cena) in moji_igralci:
+    %for i, (id, ekipa_id, igralec, datum_rojstva, polozaj_y, rating, boljsa_noga, cena) in enumerate(moji_igralci):
     <tr>
+      <td>{{i + 1}}</td>
       <td>{{igralec}}</td>
       <td>{{datum_rojstva}}</td>
       <td>{{poz[polozaj_y]}}</td>
