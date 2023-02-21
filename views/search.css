@@ -1,27 +1,17 @@
-form {
-    max-width: 500px;
-    margin: 0 auto;
-  }
-  
-  label {
-    display: block;
-    font-weight: bold;
-    margin-top: 20px;
-  }
-  
-  input[type="text"],
-  input[type="checkbox"] {
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-  
-  input[type="submit"] {
-    margin-top: 20px;
-    background-color: #008CBA;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-  }
+                    <!--malo lepse oblikujemo tabele-->
+    table { 
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+ 

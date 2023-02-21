@@ -1,28 +1,28 @@
 % rebase('base.html')
 
 <style>                               <!--malo lepse oblikujemo tabele-->
-    table { 
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      text-align: left;
-      padding: 8px;
-    }
-    th {
-      background-color: #4CAF50;
-      color: white;
-    }
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-  </style>
-
+  table { 
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+  th {
+    background-color: #4CAF50;
+    color: white;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+</style>
 
 <h1>Ime ekipe: {{ime_ekipe[0]}}</h1>   <!-- Z [0] extractamo tuple-->
 
-<table>
+<table class = "table">
     <tr>
+      <td></td>
       <td>Igralec</td>
       <td>Datum rojstva</td>
       <td>Igralni položaj</td>
@@ -30,8 +30,10 @@
       <td>Boljša noga</td>
       <td>Cena(v M€)</td>
     </tr>
-    %for (id, team_id, igralec, datum_rojstva, polozaj_y, rating, boljsa_noga, cena) in igralci:
+    <!--da steje koliko imam igralcev:i-->
+    %for i, (id, team_id, igralec, datum_rojstva, polozaj_y, rating, boljsa_noga, cena) in enumerate(igralci):   
     <tr>
+      <td>{{i + 1}}</td>
       <td>{{igralec}}</td>
       <td>{{datum_rojstva}}</td>
       <td>{{poz[polozaj_y]}}</td>

@@ -21,7 +21,7 @@
 
 <div>
     <form action="/quick_match" method="post">
-        <label for="home_team">home</label>
+        <label for="home_team">domaci</label>
         <select name="home_team" id="home_team">
             <option value=50000>MojaEkipa</option>
             <option value=8722>1. FC Koln</option>
@@ -123,7 +123,7 @@
             <option value=8659>West Bromwich Albion</option>
             <option value=8654>West Ham United</option>  
         </select>
-        <label for="away_team">home</label>
+        <label for="away_team">gostje</label>
         <select name="away_team" id="away_team" >
             <option value=50000>MojaEkipa</option>
             <option value=8722>1. FC Koln</option>
@@ -227,14 +227,14 @@
         </select>
         <button type="submit">prikazi igralce ekip</button>
       </form>
-    
 
+      <br>
 
     % if home_igralci != []:
     <form action="/simuliraj_tekmo" method="post">
         <h2>Domaci: {{domaci}}</h2>
 
-    <table>
+    <table class="table">
         <tr>
           <td></td>
           <td>Igralec</td>
@@ -261,9 +261,11 @@
         %end
       </table>
 
+      <br>
+
         <h2>Gostje: {{gostje}}</h2>
         
-        <table>
+        <table class="table">
             <tr>
               <td></td>
               <td>Igralec</td>
@@ -290,8 +292,11 @@
             %end
           </table>
 
+          <br>
+
         <button type="submit">Odigraj tekmo</button>
         %end
+
 
     </form>
 

@@ -9,7 +9,7 @@ BEGIN TRANSACTION;
 -- Table: Team
 --DROP TABLE IF EXISTS Team;
 CREATE TABLE Team (id INTEGER PRIMARY KEY, league_id INTEGER REFERENCES League (id), team_api_id INTEGER UNIQUE, team_fifa_api_id INTEGER, team_long_name TEXT, team_short_name TEXT);
-INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (50000, null, 50000, null, 'MojaEkipa', 'MEK');
+INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (50000, null, 50000, null, 'Moja Ekipa', 'MEK');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (3457, 1729, 10260, 11, 'Manchester United', 'MUN');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (3458, 1729, 10261, 13, 'Newcastle United', 'NEW');
 INSERT INTO Team (id, league_id, team_api_id, team_fifa_api_id, team_long_name, team_short_name) VALUES (3459, 1729, 9825, 1, 'Arsenal', 'ARS');

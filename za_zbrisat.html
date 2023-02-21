@@ -240,3 +240,61 @@
   
     <button type="submit">Search</button>
   </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  quick_match
+  <select name="home_team" id="home_team">
+    <option value="50000">ekipa 1</option>
+    <option value="10260">ime ekipe 2</option>
+
+
+
+    <form action="/quick_match" method="post">
+        <label for="home_team">home</label>
+        <select name="home_team" id="home_team">
+          <option value='10260'>Manchester United</option>
+  
+        </select>
+        <label for="away_team">away</label>
+        <select name="away_team" id="away_team" >
+          <option value="10194">ekipa 1</option>
+          <option value="10260">ime ekipe 2</option>
+        </select>
+        <button type="submit">prikazi igralce ekip</button>
+      </form>
+
+
+
+    
+      <ol>
+        %for i, (id, igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, _, polozaj_y, rating, preferred_foot, cost) in enumerate(home_igralci):
+        <li>{{igralec}}, rojen: {{datum_rojstva}}, {{ekipa_dolgo}}, {{ekipa_kratko}}, {{poz[polozaj_y]}}, rating: {{rating}}
+            <input type="checkbox" name="{{i}}" value="{{id}}" {{'checked' if i < 11 else ''}}>
+        </li>
+        %end
+    </ol>
+    Player.player_api_id, Player.player_name, DATE(Player.birthday) AS birthday, Team.team_long_name, Team.team_short_name,
+Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot,
+Player_Attributes.player_cost
+
+
+
+%for i, (id, igralec, datum_rojstva, ekipa_dolgo, ekipa_kratko, _, polozaj_y, rating, preferred_foot, cost) in enumerate(away_igralci):
+            <li>{{igralec}}, rojen: {{datum_rojstva}}, {{ekipa_dolgo}}, {{ekipa_kratko}}, {{poz[polozaj_y]}}, rating: {{rating}}
+              <input type="checkbox" name="{{i+30}}" value="{{id}}" {{'checked' if i < 11 else ''}}></11>
+            </li>
+            %end
+        </ol>

@@ -236,12 +236,13 @@ def kupi(igralec_id):
     ORDER BY Player_Attributes.overall_rating DESC;"""
     cur.execute(s)
     player_api_id, team_id, player_name, birthday, player_coordinate_x, player_coordinate_y, overall_rating, preferred_foot, cena = tuple(cur.fetchone())
-    # TODO preveri ce je ta igralec ze med kupljenimi
+    # preveri ce je ta igralec ze med kupljenimi
     s = f"SELECT COUNT(*) FROM Player WHERE team_id = {moja_ekipa_id} AND player_api_id = {player_api_id};"
     cur.execute(s)
     stevilo_enakih_v_moji_ekipi = cur.fetchone()[0]
     if stevilo_enakih_v_moji_ekipi != 0:
         raise Exception("Igralec je ze v MojaEkipa")
+    # TODO poglej kako smo zapisovali igralce, ce smo klicali po imenu, potem dobimo dva razlicna igralca z istim imenom ko kupimo enega. V tabeli je se vedno samo ta ki smo ga kupili, zato potem ko prodamo tistega ki ganismo kupili dobimo denar ampak se ne proda, ce prodamo pravega, potem se zbriseta oba
     # preverimo ce imamo dovolj denarja 
     if cena <= zacetni_budget:
         # izracunamo koliko denarja nam ostane
@@ -307,8 +308,8 @@ def stevilo_igralcev_v_ekipi():
 # def kupi(igralec_id):
 #     cur.execute(f"SELECT player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y FROM Player WHERE player_api_id = {igralec_id};")
 #     player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y = tuple(cur.fetchone())
-#     # TODO preveri ce je ta igralec ze med kupljenimi
-#     # TODO denar se mora odsteti od budgeta
+#     # preveri ce je ta igralec ze med kupljenimi
+#     # denar se mora odsteti od budgeta
 #     s = f"""
 #         INSERT INTO Player
 #         (player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y) 
@@ -320,7 +321,7 @@ def stevilo_igralcev_v_ekipi():
 
 
 def igralci_v_ekipi(team):
-    # # TODO pogruntaj zakaj select ne vrne igralcev za mojo ekipo
+    # # pogruntaj zakaj select ne vrne igralcev za mojo ekipo
     # s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
     # JOIN Team ON Player.team_id = Team.team_api_id 
     # JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
@@ -340,7 +341,7 @@ def igralci_v_ekipi(team):
     return res
 
     # def igralci_v_ekipi(team):
-    # # TODO pogruntaj zakaj select ne vrne igralcev za mojo ekipo
+    ## pogruntaj zakaj select ne vrne igralcev za mojo ekipo
     # s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
     # JOIN Team ON Player.team_id = Team.team_api_id 
     # JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
@@ -377,25 +378,235 @@ def ekipa_model(ime_ekipe):
     igralci = res.fetchall()
     return ime_ekipe, igralci
 
-def f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev):
-    s_home = f"""
-        SELECT overall_rating from Player_Attributes 
-        WHERE player_api_id in {tuple(seznam_home_igralcev)}
-    """
-    cur.execute(s_home)
-    vsi = cur.fetchall()
-    home_rating = sum(x[0] for x in vsi)
-    s_away = f"""
-        SELECT overall_rating from Player_Attributes 
-        WHERE player_api_id in {tuple(seznam_away_igralcev)}
-    """
-    cur.execute(s_away)
-    vsi = cur.fetchall()
-    away_rating = sum(x[0] for x in vsi)
-    print(home_rating, away_rating)
-    smiselni_rezultati = ["0 : 0", "0 : 1", "0 : 2", "0 : 3", "1 : 0", "1 : 1", "1 : 2", "1 : 3", "2 : 0", "2 : 1", "2 : 2", "2 : 3", "3 : 0", "3 : 1", "3 : 2", "3 : 3"] 
-    return random.choice(smiselni_rezultati) + f" home rating:{home_rating}, away rating:{away_rating}"
+# def f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev):
+#     s_home = f"""
+#         SELECT overall_rating from Player_Attributes 
+#         WHERE player_api_id in {tuple(seznam_home_igralcev)}
+#     """
+#     cur.execute(s_home)
+#     vsi = cur.fetchall()
+#     home_rating = sum(x[0] for x in vsi)
+#     s_away = f"""
+#         SELECT overall_rating from Player_Attributes 
+#         WHERE player_api_id in {tuple(seznam_away_igralcev)}
+#     """
+#     cur.execute(s_away)
+#     vsi = cur.fetchall()
+#     away_rating = sum(x[0] for x in vsi)
+#     print(home_rating, away_rating)
+#     smiselni_rezultati = ["0 : 0", "0 : 1", "0 : 2", "0 : 3", "1 : 0", "1 : 1", "1 : 2", "1 : 3", "2 : 0", "2 : 1", "2 : 2", "2 : 3", "3 : 0", "3 : 1", "3 : 2", "3 : 3"]
+#     smiselni_rezultati.extend(["0 : 0"] * 100)
+#     return random.choice(smiselni_rezultati) + f" home rating:{home_rating}, away rating:{away_rating}"
 
+
+def f_izracunaj_stohasticen_rezultat(seznam_domacih_igralcev, seznam_gostujocih_igralcev):
+    utezi_ocen = slovar_ratingov = {
+        'skupna_ocena': 0.6,
+        'golman_ocena': 0.1,
+        'branilec_ocena': 0.1,
+        'vezist_ocena': 0.1,
+        'napadalec_ocena': 0.1
+    }
+    ### domaci igralci
+    # pogledamo kateri domaci igralci so v prvi postavi (kaksni so ratingi in na katerem polozaju igrajo)
+    s_domaci = f"""
+        SELECT Player_Attributes.overall_rating, Player.player_coordinate_y FROM Player_Attributes JOIN Player ON Player.player_api_id = Player_Attributes.player_api_id
+        WHERE Player.player_api_id in {tuple(seznam_domacih_igralcev)};
+    """
+    cur.execute(s_domaci)
+    vsi = cur.fetchall()   # seznam tuple-ov, za vsak rating in pozicijo je en tuple
+    # pogledamo kaksni so ratingi na vsaki poziciji in koliko igralcev je na posamezni poziciji
+    rating_vratar_domaci = 0
+    st_vratar_domaci = 0
+    rating_branilec_domaci = 0
+    st_branilec_domaci = 0
+    rating_vezist_domaci = 0
+    st_vezist_domaci = 0
+    rating_napadalec_domaci = 0
+    st_napadalec_domaci = 0
+    rating_skupen_domaci = 0
+    koliko_igralcev_domaci = 0
+    for el in vsi:
+        rating = el[0]
+        pozicija = POZICIJE[el[1]]
+        print(rating, pozicija)
+        if pozicija == 'vratar':
+            rating_vratar_domaci += rating
+            st_vratar_domaci += 1
+            rating_skupen_domaci += rating
+            koliko_igralcev_domaci += 1
+        if pozicija == 'branilec':
+            rating_branilec_domaci += rating
+            st_branilec_domaci += 1
+            rating_skupen_domaci += rating
+            koliko_igralcev_domaci += 1
+        if pozicija == 'vezist':
+            rating_vezist_domaci += rating
+            st_vezist_domaci += 1
+            rating_skupen_domaci += rating
+            koliko_igralcev_domaci += 1
+        if pozicija == 'napadalec':
+            rating_napadalec_domaci += rating
+            st_napadalec_domaci += 1
+            rating_skupen_domaci += rating
+            koliko_igralcev_domaci += 1
+    # pogledamo nekaj cudnih primerov, ce se to zgodi bomo na koncu pristeli gole (ker ce nimas v golu golmana (ampak igralca) zagotovo dobis vec golov)
+    ni_vratarja_domaci = 0  # druga ekipa +
+    if st_vratar_domaci == 0:
+        ni_vratarja_domaci = 2
+    if st_vratar_domaci > 1:      # ce je vec vratarjev, jih v skupnem ratingu ne bomo steli (v ratingu vratarjev, ki ga bomo mnozili z 0,1 se vedno ostanejo) 
+        rating_skupen_domaci -= rating_vratar_domaci // st_vratar_domaci
+    premalo_branilcev_domaci = 0  # druga ekipa +
+    if st_branilec_domaci < 3:
+        premalo_branilcev_domaci = 2
+    premalo_vezistov_domaci = 0  # druga ekipa +
+    if st_vezist_domaci < 2:
+        premalo_vezistov_domaci = 1
+    veliko_napadalcev_domaci = 0   # domaci +
+    if st_napadalec_domaci > 3:
+        veliko_napadalcev_domaci = 1
+
+    # naredimo slovar z vsemi ratingi v domaci ekipi, kljuci so isti kot v slovarju utezi_ocen
+    slovar_ratingov_domaci = {
+        'skupna_ocena': rating_skupen_domaci,
+        'golman_ocena': rating_vratar_domaci,
+        'branilec_ocena': rating_branilec_domaci,
+        'vezist_ocena': rating_vezist_domaci,
+        'napadalec_ocena': rating_napadalec_domaci
+    }
+    # po formuli dobimo skupne ocene domacih (to bomo uporabili za izracun verjetnosti, da zmaga domaci (oz gostujoci))
+    skupne_ocene_domacih = sum([utezi_ocen[key] * slovar_ratingov_domaci[key] for key in utezi_ocen])
+    print(skupne_ocene_domacih)
+
+    ### pogledamo gostujoce igralce
+    s_gostje = f"""
+        SELECT Player_Attributes.overall_rating, Player.player_coordinate_y FROM Player_Attributes JOIN Player ON Player.player_api_id = Player_Attributes.player_api_id
+        WHERE Player.player_api_id in {tuple(seznam_gostujocih_igralcev)};
+    """
+    cur.execute(s_gostje)
+    vsi_g = cur.fetchall()   # seznam tuple-ov, za vsak rating in pozicijo je en tuple
+    # pogledamo posamezne ratinge za gostujoce
+    rating_vratar_gostujoci = 0
+    st_vratar_gostujoci = 0
+    rating_branilec_gostujoci = 0
+    st_branilec_gostujoci = 0
+    rating_vezist_gostujoci = 0
+    st_vezist_gostujoci = 0
+    rating_napadalec_gostujoci = 0
+    st_napadalec_gostujoci = 0
+    rating_skupen_gostujoci = 0
+    koliko_igralcev_gostujoci = 0
+    for el in vsi_g:
+        rating = el[0]
+        pozicija = POZICIJE[el[1]]
+        print(rating, pozicija)
+        if pozicija == 'vratar':
+            rating_vratar_gostujoci += rating
+            st_vratar_gostujoci += 1
+            rating_skupen_gostujoci += rating
+            koliko_igralcev_gostujoci += 1
+        if pozicija == 'branilec':
+            rating_branilec_gostujoci += rating
+            st_branilec_gostujoci += 1
+            rating_skupen_gostujoci += rating
+            koliko_igralcev_gostujoci += 1
+        if pozicija == 'vezist':
+            rating_vezist_gostujoci += rating
+            st_vezist_gostujoci += 1
+            rating_skupen_gostujoci += rating
+            koliko_igralcev_gostujoci += 1
+        if pozicija == 'napadalec':
+            rating_napadalec_gostujoci += rating
+            st_napadalec_gostujoci += 1
+            rating_skupen_gostujoci += rating
+            koliko_igralcev_gostujoci += 1
+
+    # pogledamo cudne primere
+    ni_vratarja_gostujoci = 0  # druga ekipa +
+    if st_vratar_gostujoci == 0:
+        ni_vratarja_gostujoci = 3
+    if st_vratar_gostujoci > 1:      # ce je vec vratarjev, jih v skupnem ratingu ne bomo steli (v ratingu vratarjev, ki ga bomo mnozili z 0,1 se vedno ostanejo) 
+        rating_skupen_gostujoci -= rating_vratar_gostujoci // st_vratar_gostujoci
+    premalo_branilcev_gostujoci = 0  # druga ekipa +
+    if st_branilec_gostujoci < 3:
+        premalo_branilcev_gostujoci = 2
+    premalo_vezistov_gostujoci = 0  # druga ekipa +
+    if st_vezist_gostujoci < 2:
+        premalo_vezistov_gostujoci = 1
+    veliko_napadalcev_gostujoci = 0   # gostujoci +
+    if st_napadalec_gostujoci > 3:
+        veliko_napadalcev_gostujoci = 1
+
+    # kljuci so isti kot pri utezi_ocen
+    slovar_ratingov_gostujoci = {
+        'skupna_ocena': rating_skupen_gostujoci,
+        'golman_ocena': rating_vratar_gostujoci,
+        'branilec_ocena': rating_branilec_gostujoci,
+        'vezist_ocena': rating_vezist_gostujoci,
+        'napadalec_ocena': rating_napadalec_gostujoci
+    }
+
+    # po formuli izracunamo
+    skupne_ocene_gostujocih = sum([utezi_ocen[key] * slovar_ratingov_gostujoci[key] for key in utezi_ocen])
+    print(skupne_ocene_gostujocih)
+
+    ## verjetnost, da zmaga posamezna ekipa
+    zmaga_domaci_verjetnost= skupne_ocene_domacih / (skupne_ocene_domacih + skupne_ocene_gostujocih)
+    zmaga_gostujoci_verjetnost = 1 - zmaga_domaci_verjetnost
+
+    # pgledamo procente, zaokrozimo na celo stevilo
+    zmaga_domaci_verjetnost = int(zmaga_domaci_verjetnost * 100)
+    zmaga_gostujoci_verjetnost = int(zmaga_gostujoci_verjetnost * 100)
+
+    # mozni rezultati
+    rezultati_zmaga_domaci = ["1 : 0", "2 : 0", "3 : 0", "2 : 1", "3 : 1", "3 : 2"] * (zmaga_domaci_verjetnost + 3) ## +3 zato, ker imajo prednost domacega igrisca
+    if zmaga_gostujoci_verjetnost < 3:        #ce bi se to slucajno nekako zgodilo
+        rezultati_zmaga_gostujoci = ["0 : 1", "0 : 2", "0 : 3", "1 : 2", "1 : 3", "2 : 3"] * (zmaga_gostujoci_verjetnost)
+    rezultati_zmaga_gostujoci = ["0 : 1", "0 : 2", "0 : 3", "1 : 2", "1 : 3", "2 : 3"] * (zmaga_gostujoci_verjetnost - 3)  #v gosteh je tezje
+    rezultat_izenacen_verjetno = ["0 : 0", "1 : 1"] * 50
+    rezultat_izenacen_manj_verjetno = ["2 : 2", "3 : 3"] * 10
+
+    smiselni_rezultati = rezultati_zmaga_domaci + rezultati_zmaga_gostujoci + rezultat_izenacen_verjetno + rezultat_izenacen_manj_verjetno
+
+    #smiselni_rezultati = ["0 : 0", "0 : 1", "0 : 2", "0 : 3", "1 : 0", "1 : 1", "1 : 2", "1 : 3", "2 : 0", "2 : 1", "2 : 2", "2 : 3", "3 : 0", "3 : 1", "3 : 2", "3 : 3"]
+    #smiselni_rezultati.extend(["0 : 0"] * 100)
+
+    # pogledamo rezultat (z random izbiro)
+    rezultat = random.choice(smiselni_rezultati)
+
+    domaci_goli = int(rezultat[0])
+    gostujoci_goli = int(rezultat[-1])
+
+    # pristejemo gole za cudne primere
+    domaci_goli = domaci_goli + veliko_napadalcev_domaci + ni_vratarja_gostujoci + premalo_branilcev_gostujoci + premalo_vezistov_gostujoci
+    gostujoci_goli = gostujoci_goli + veliko_napadalcev_gostujoci + ni_vratarja_domaci + premalo_branilcev_domaci + premalo_vezistov_domaci
+
+    # ce zmaga na papirju slabsa ekipa, naredimo tako, da ne zmaga za prevec golov
+    if domaci_goli > gostujoci_goli + 1 and rating_skupen_gostujoci > rating_skupen_domaci:
+        domaci_goli -= 1
+    if domaci_goli + 1 < gostujoci_goli and rating_skupen_gostujoci < rating_skupen_domaci:
+        gostujoci_goli -= 1
+    
+    return f"{domaci_goli} : {gostujoci_goli}"
+
+
+def stevilo_igralcev_v_moji_ekipi():
+    moja_ekipa_id = 50000
+    s = f"SELECT COUNT(*) FROM Player WHERE team_id = {moja_ekipa_id}"
+    cur.execute(s)
+    res = cur.fetchone()[0]
+    return res
+
+# v kateri ekipi so igralec v tuplu idji_igralcev
+def katera_ekipa(idji_igralcev):
+    # grdo (poizkusi tudi kako drugace)
+    s = f"""SELECT Team.team_long_name FROM Team JOIN Player ON Team.team_api_id = Player.team_id 
+        WHERE Player.player_api_id IN {idji_igralcev}
+        GROUP BY team_long_name
+        HAVING COUNT(*) = 11;"""
+    cur.execute(s)
+    res = cur.fetchone()[0]
+    return res
 
 # import sqlite3
 
@@ -527,7 +738,7 @@ def f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev)
 
 
 
-# # TODO: Tukaj moramo ustvariti bazo, če je še ni
+##: Tukaj moramo ustvariti bazo, če je še ni
 
 # #baza.pripravi_vse(conn)   #naj naredi baza vse kar je treba delati
 
