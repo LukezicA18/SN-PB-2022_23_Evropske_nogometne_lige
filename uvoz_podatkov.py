@@ -20,6 +20,7 @@ if ponostavi_bazo:
         uvoziSQL(cur, "podatki/player_attributes.sql")
         uvoziSQL(cur, "podatki/team.sql")
         uvoziSQL(cur, "podatki/team_attributes.sql")
+        uvoziSQL(cur, "podatki/account.sql")
 
 with sqlite3.connect(baza) as con:
     cur = con.cursor()

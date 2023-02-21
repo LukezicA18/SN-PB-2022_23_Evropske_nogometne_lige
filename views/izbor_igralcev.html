@@ -1,24 +1,24 @@
 % rebase('base.html')
 
 
-    <style>                          <!--malo lepse oblikujemo tabele-->
+<style>                          <!--malo lepse oblikujemo tabele-->
 
-    table { 
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      text-align: left;
-      padding: 8px;
-    }
-    th {
-      background-color: #4CAF50;
-      color: white;
-    }
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-  </style>
+  table { 
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+  th {
+    background-color: #4CAF50;
+    color: white;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+</style>
 
 
 <h4 style="float:right;">Preostanek denarja: {{denar[0]}}M €</h4>
@@ -60,46 +60,77 @@
   </table>
 
 
-
 <h2>Poišči igralca</h2>
-
+<div class="row">
+<div class="col">
 <h6>Filtriraj glede na ime igralca:</h6>
-<form action="/naredi_ekipo" method="post" class="search-form">
-    <label for="igralec">Ime igralca:</label>
+<form action="/naredi_ekipo" method="post" class="search">
+    <label for="igralec"></label>
     <input type="text" id="igralec" name="igralec" placeholder="Vnesi ime igralca">
-  
+</div>
+<div class="col">
+  <ul>
+    <div class="row">
     <h6>Filtriraj glede na pozicijo:</h6>
+    </div>
     <div class="checkbox-group">
+      <div class="row">
       <input type="checkbox" id="vratar" name="vratar" value="vratar" checked>
-      <label for="vratar">Vratar </label>
+      <label for="vratar">Vratar</label>
+      </div>
+      <div class="row">
       <input type="checkbox" id="branilec" name="branilec" value="branilec" checked>
-      <label for="branilec">Branilec </label>
+      <label for="branilec">Branilec</label>
+      </div>
+      <div class="row">
       <input type="checkbox" id="vezist" name="vezist" value="vezist" checked>
-      <label for="vezist">Vezist </label>
+      <label for="vezist">Vezist</label>
+      </div>
+      <div class="row">
       <input type="checkbox" id="napadalec" name="napadalec" value="napadalec" checked>
-      <label for="napadalec">Napadalec </label>
+      <label for="napadalec">Napadalec</label>
+      </div>
+
     </div>
-  
+</div>
+</ul>
+<div class="col">
     <h6>Filtriraj glede na klub:</h6>
-    <label for="klub">Ime kluba:</label>
+    <label for="klub"></label>
     <input type="text" id="klub" name="klub" placeholder="Vnesi ime kluba">
-  
+</div>
+<div class="col">
+  <ul>
+    <div class="row">
     <h6>Filtriraj glede na ceno:</h6>
-    <div class="checkbox-group">
-      <input type="checkbox" id="manj20" name="manj20" value="manj20">
-      <label for="manj20">cenejsi od 20M€ </label>
-      <input type="checkbox" id="manj40" name="manj40" value="manj40">
-      <label for="manj40">cenejsi od 40M€ </label>
-      <input type="checkbox" id="manj60" name="manj60" value="manj60">
-      <label for="manj60">cenejsi od 60M€ </label>
-      <input type="checkbox" id="manj80" name="manj80" value="manj80">
-      <label for="manj80">cenejsi od 80M€ </label>
-      <input type="checkbox" id="manj100" name="manj100" value="manj100">
-      <label for="manj100">cenejsi od 100M€ </label>
     </div>
-  
+    <div class="checkbox-group">
+      <div class="row">
+      <input type="checkbox" id="manj20" name="manj20" value="manj20">
+      <label for="manj20">cenejsi od 20M€</label>
+      </div>
+      <div class="row">
+      <input type="checkbox" id="manj40" name="manj40" value="manj40">
+      <label for="manj40">cenejsi od 40M€</label>
+      </div>
+      <div class="row">
+      <input type="checkbox" id="manj60" name="manj60" value="manj60">
+      <label for="manj60">cenejsi od 60M€</label>
+      </div>
+      <div class="row">
+      <input type="checkbox" id="manj80" name="manj80" value="manj80">
+      <label for="manj80">cenejsi od 80M€</label>
+      </div>
+      <div class="row">
+      <input type="checkbox" id="manj100" name="manj100" value="manj100">
+      <label for="manj100">cenejsi od 100M€</label>
+      </div>
+    </div>
+</div>
+</ul>
     <button type="submit">Search</button>
   </form>
+</div>
 
 
       

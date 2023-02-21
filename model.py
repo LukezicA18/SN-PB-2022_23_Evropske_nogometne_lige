@@ -176,6 +176,7 @@ def vse_tekme_v_sezoni(league_id, season, stage=100):
 
 #################### nakup_igralcev
 
+# poiscemo igralce, da jih lahko kupimo (funkcija jih vrne glede na filtre, ki smo jih dali)
 def seznam_igralcev_za_prikaz(ime_igralca, vratar, branilec, vezist, napadalec, klub, manj20, manj40, manj60, manj80, manj100):
     moja_ekipa_id = 50000
     polozaji = []
@@ -215,6 +216,7 @@ def seznam_igralcev_za_prikaz(ime_igralca, vratar, branilec, vezist, napadalec, 
     return sez_igralcev
 
 
+# da vidimo kaksen je zacetni budget (preberemo iz tabele Account)
 def denar_na_zacetku():
     moja_ekipa_id = 50000
     s = f"SELECT budget FROM Account WHERE team_id = {moja_ekipa_id};"
@@ -226,6 +228,7 @@ def denar_na_zacetku():
     return zacetni_budget
 
 
+# ko pritisnemo kupi se izvede ta funkcija
 def kupi(igralec_id):
     moja_ekipa_id = 50000
     zacetni_budget = denar_na_zacetku()
@@ -241,8 +244,8 @@ def kupi(igralec_id):
     cur.execute(s)
     stevilo_enakih_v_moji_ekipi = cur.fetchone()[0]
     if stevilo_enakih_v_moji_ekipi != 0:
-        raise Exception("Igralec je ze v MojaEkipa")
-    # TODO poglej kako smo zapisovali igralce, ce smo klicali po imenu, potem dobimo dva razlicna igralca z istim imenom ko kupimo enega. V tabeli je se vedno samo ta ki smo ga kupili, zato potem ko prodamo tistega ki ganismo kupili dobimo denar ampak se ne proda, ce prodamo pravega, potem se zbriseta oba
+        raise Exception("Igralec je že v ekipi Moja Ekipa.")
+    # poglej kako smo zapisovali igralce, ce smo klicali po imenu, potem dobimo dva razlicna igralca z istim imenom ko kupimo enega. V tabeli je se vedno samo ta ki smo ga kupili, zato potem ko prodamo tistega ki ganismo kupili dobimo denar ampak se ne proda, ce prodamo pravega, potem se zbriseta oba
     # preverimo ce imamo dovolj denarja 
     if cena <= zacetni_budget:
         # izracunamo koliko denarja nam ostane
@@ -253,13 +256,14 @@ def kupi(igralec_id):
             (player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y) 
             VALUES ({player_api_id}, '{player_name}', (SELECT MAX(player_fifa_api_id)+1 FROM Player), '{birthday}', 50000, {player_coordinate_x}, {player_coordinate_y});
             """ 
-    #ce nimmo dovolj denarja
+    #ce nimamo dovolj denarja
     else:
         raise RuntimeError("Ni dovolj denarja.")
     cur.execute(s)
     con.commit()
 
 
+# ko pritisnemo prodaj se izvede ta funkcija
 def prodaj(igralec_id):
     moja_ekipa_id = 50000
     zacetni_budget = denar_na_zacetku()
@@ -272,13 +276,12 @@ def prodaj(igralec_id):
     cur.execute(s)
     cena, = tuple(cur.fetchone())
     #player_api_id, team_id, player_name, birthday, player_coordinate_x, player_coordinate_y, overall_rating, preferred_foot, 
-    # TODO preveri ce je ta igralec ze med kupljenimi, ce ni ga ne mores prodati!!!
-
     nov_budget = zacetni_budget + cena
     cur.execute(f"UPDATE Account SET budget = {nov_budget} WHERE team_id = {moja_ekipa_id}")
     s = f"DELETE FROM Player WHERE player_api_id = {igralec_id} AND team_id = {moja_ekipa_id};" 
     cur.execute(s)
     con.commit()
+
 
 # da vidimo, koliko imamo trenutno denarja
 def koliko_denarja():
@@ -304,32 +307,12 @@ def stevilo_igralcev_v_ekipi():
 #     else:
 #         return r - 10
 
-
-# def kupi(igralec_id):
-#     cur.execute(f"SELECT player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y FROM Player WHERE player_api_id = {igralec_id};")
-#     player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y = tuple(cur.fetchone())
-#     # preveri ce je ta igralec ze med kupljenimi
-#     # denar se mora odsteti od budgeta
-#     s = f"""
-#         INSERT INTO Player
-#         (player_api_id, player_name, player_fifa_api_id, birthday, team_id, player_coordinate_x, player_coordinate_y) 
-#         VALUES ({player_api_id}, '{player_name}', (SELECT MAX(player_fifa_api_id)+1 FROM Player), '{birthday}', 50000, {player_coordinate_x}, {player_coordinate_y});
-#     """ 
-#     cur.execute(s)
-#     con.commit()
 ####################################
 
 
+################## quick match
+# pogleda kateri igralci so trenutno v moji ekipi
 def igralci_v_ekipi(team):
-    # # pogruntaj zakaj select ne vrne igralcev za mojo ekipo
-    # s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
-    # JOIN Team ON Player.team_id = Team.team_api_id 
-    # JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
-    # WHERE Player.team_id = {team}
-    # ORDER BY Player_Attributes.overall_rating DESC;"""
-    # cur.execute(s) 
-    # res = cur.fetchall()
-    # return res
     s = f"""SELECT Player.player_api_id, Player.player_name, DATE(Player.birthday) AS birthday, Team.team_long_name, Team.team_short_name,
     Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot,
     Player_Attributes.player_cost FROM Player 
@@ -340,17 +323,6 @@ def igralci_v_ekipi(team):
     res = cur.fetchall()
     return res
 
-    # def igralci_v_ekipi(team):
-    ## pogruntaj zakaj select ne vrne igralcev za mojo ekipo
-    # s = f"""SELECT Player.player_api_id, Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y, Player_Attributes.overall_rating FROM Player 
-    # JOIN Team ON Player.team_id = Team.team_api_id 
-    # JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
-    # WHERE Player.team_id = {team}
-    # ORDER BY Player_Attributes.overall_rating DESC;"""
-    # cur.execute(s) 
-    # res = cur.fetchall()
-    # return res
-
 # to funkcijo rabim, da vidim vse ekipe in njihove id-je, tako lahko v html lazje zapisem, ni treba vsake ekipe posebej, ampak mi potem nekaj ne dela v html, tako da sem samo naredil to funkcijo v nekem drugem oknu in skopiral rezultat v html
 def vse_ekipe():
     s = f"SELECT Team.team_api_id, Team.team_long_name FROM Team ORDER BY team_long_name;"
@@ -359,46 +331,22 @@ def vse_ekipe():
     vse_ekipe = "\n".join([f"<option value='{ekipa[0]}'>{ekipa[1]}</option>" for ekipa in ekipe])
     return vse_ekipe
 
+# iz danega idja ekipe dobimo ime ekipe
 def id_ekipe_v_ime(ekipa_id):
     s = f"SELECT team_long_name FROM Team WHERE team_api_id = {ekipa_id};"
     cur.execute(s)
     res = cur.fetchone()[0]
     return res
 
+# iz danega idija lige dobimo ime lige
 def id_lige_v_ime(liga_id):
     s = f"SELECT name FROM League WHERE id = {liga_id};"
     cur.execute(s)
     res = cur.fetchone()[0]
     return res
 
-def ekipa_model(ime_ekipe):
-    s = f"""SELECT Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y FROM Player 
-            JOIN Team ON Player.team_id = Team.team_api_id WHERE Team.team_long_name = '{ime_ekipe}';"""
-    res = cur.execute(s) 
-    igralci = res.fetchall()
-    return ime_ekipe, igralci
 
-# def f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev):
-#     s_home = f"""
-#         SELECT overall_rating from Player_Attributes 
-#         WHERE player_api_id in {tuple(seznam_home_igralcev)}
-#     """
-#     cur.execute(s_home)
-#     vsi = cur.fetchall()
-#     home_rating = sum(x[0] for x in vsi)
-#     s_away = f"""
-#         SELECT overall_rating from Player_Attributes 
-#         WHERE player_api_id in {tuple(seznam_away_igralcev)}
-#     """
-#     cur.execute(s_away)
-#     vsi = cur.fetchall()
-#     away_rating = sum(x[0] for x in vsi)
-#     print(home_rating, away_rating)
-#     smiselni_rezultati = ["0 : 0", "0 : 1", "0 : 2", "0 : 3", "1 : 0", "1 : 1", "1 : 2", "1 : 3", "2 : 0", "2 : 1", "2 : 2", "2 : 3", "3 : 0", "3 : 1", "3 : 2", "3 : 3"]
-#     smiselni_rezultati.extend(["0 : 0"] * 100)
-#     return random.choice(smiselni_rezultati) + f" home rating:{home_rating}, away rating:{away_rating}"
-
-
+# doloci kaksen je rezultat tekme
 def f_izracunaj_stohasticen_rezultat(seznam_domacih_igralcev, seznam_gostujocih_igralcev):
     utezi_ocen = slovar_ratingov = {
         'skupna_ocena': 0.6,
@@ -590,6 +538,7 @@ def f_izracunaj_stohasticen_rezultat(seznam_domacih_igralcev, seznam_gostujocih_
     return f"{domaci_goli} : {gostujoci_goli}"
 
 
+# pogleda koliko igralcev je v nasi ekipi
 def stevilo_igralcev_v_moji_ekipi():
     moja_ekipa_id = 50000
     s = f"SELECT COUNT(*) FROM Player WHERE team_id = {moja_ekipa_id}"
@@ -597,7 +546,7 @@ def stevilo_igralcev_v_moji_ekipi():
     res = cur.fetchone()[0]
     return res
 
-# v kateri ekipi so igralec v tuplu idji_igralcev
+# v kateri ekipi so igralci v tuplu idji_igralcev
 def katera_ekipa(idji_igralcev):
     # grdo (poizkusi tudi kako drugace)
     s = f"""SELECT Team.team_long_name FROM Team JOIN Player ON Team.team_api_id = Player.team_id 
@@ -607,156 +556,13 @@ def katera_ekipa(idji_igralcev):
     cur.execute(s)
     res = cur.fetchone()[0]
     return res
+#############
 
-# import sqlite3
-
-# def izracunaj_lestvico(cur, league_id, season, krog=100):
-
-#     tekme = vse_tekme_v_sezoni(cur, league_id, season, krog)
-#     # {ekipa_id: (Z, R, P, dani_goli, prejeti_goli)}
-#     sl = {}
-
-#     for stage, date, home_team_id, away_team_id, home_team_goals, away_team_goals in tekme:
-#         if home_team_id not in sl:
-#             if home_team_goals > away_team_goals:
-#                 sl[home_team_id] = (1, 0, 0, home_team_goals, away_team_goals)
-#             elif home_team_goals < away_team_goals:
-#                 sl[home_team_id] = (0, 0, 1, home_team_goals, away_team_goals)
-#             elif home_team_goals == away_team_goals:
-#                 sl[home_team_id] = (0, 1, 0, home_team_goals, away_team_goals)
-#         else:
-#             if home_team_goals > away_team_goals:
-#                 Z, R, P, dani_goli, prejeti_goli = sl[home_team_id]
-#                 Z += 1
-#                 R += 0
-#                 P += 0
-#                 dani_goli += home_team_goals
-#                 prejeti_goli += away_team_goals
-#                 sl[home_team_id] = (Z, R, P, dani_goli, prejeti_goli)
-#             elif home_team_goals < away_team_goals:
-#                 Z, R, P, dani_goli, prejeti_goli = sl[home_team_id]
-#                 Z += 0
-#                 R += 0
-#                 P += 1
-#                 dani_goli += home_team_goals
-#                 prejeti_goli += away_team_goals
-#                 sl[home_team_id] = (Z, R, P, dani_goli, prejeti_goli)
-#             elif home_team_goals == away_team_goals:
-#                 Z, R, P, dani_goli, prejeti_goli = sl[home_team_id]
-#                 Z += 0
-#                 R += 1
-#                 P += 0
-#                 dani_goli += home_team_goals
-#                 prejeti_goli += away_team_goals
-#                 sl[home_team_id] = (Z, R, P, dani_goli, prejeti_goli)
-#         if away_team_id not in sl:
-#             if away_team_goals > home_team_goals:
-#                 sl[away_team_id] = (1, 0, 0, away_team_goals, home_team_goals)
-#             elif away_team_goals < home_team_goals:
-#                 sl[away_team_id] = (0, 0, 1, away_team_goals, home_team_goals)
-#             elif away_team_goals == home_team_goals:
-#                 sl[away_team_id] = (0, 1, 0, away_team_goals, home_team_goals)
-#         else:
-#             if away_team_goals > home_team_goals:
-#                 Z, R, P, dani_goli, prejeti_goli = sl[away_team_id]
-#                 Z += 1
-#                 R += 0
-#                 P += 0
-#                 dani_goli += away_team_goals
-#                 prejeti_goli += home_team_goals
-#                 sl[away_team_id] = (Z, R, P, dani_goli, prejeti_goli)
-#             elif away_team_goals < home_team_goals:
-#                 Z, R, P, dani_goli, prejeti_goli = sl[away_team_id]
-#                 Z += 0
-#                 R += 0
-#                 P += 1
-#                 dani_goli += away_team_goals
-#                 prejeti_goli += home_team_goals
-#                 sl[away_team_id] = (Z, R, P, dani_goli, prejeti_goli)
-#             elif away_team_goals == home_team_goals:
-#                 Z, R, P, dani_goli, prejeti_goli = sl[away_team_id]
-#                 Z += 0
-#                 R += 1
-#                 P += 0
-#                 dani_goli += away_team_goals
-#                 prejeti_goli += home_team_goals
-#                 sl[away_team_id] = (Z, R, P, dani_goli, prejeti_goli)        
-    
-#     return sl
-
-
-
-
-# def vse_tekme_v_sezoni(cur, league_id, season, stage=100):
-#     s2 = f"""
-#     SELECT 
-#         stage, date, home_team_api_id, away_team_api_id, home_team_goal, away_team_goal
-#         FROM Match
-#         WHERE league_id = {league_id} AND season = '{season}' AND stage <= {stage}
-#         ORDER BY league_id, stage;
-#     """
-#     res = cur.execute(s2)
-#     tekme = res.fetchall()
-#     return tekme
-
-
-
-
-
-
-# # def uvoziSQL(cur, datoteka):
-# #     with open(datoteka) as f:
-# #         koda = f.read()
-# #         cur.executescript(koda)
-    
-# # with sqlite3.connect(baza_datoteka) as baza:
-# #     cur = baza.cursor()
-# #     # uvoziSQL(cur, "poskus.sql")
-# #     uvoziSQL(cur, "country.sql")
-# #     uvoziSQL(cur, "league.sql")
-# #     uvoziSQL(cur, "match.sql")
-# #     uvoziSQL(cur, "player.sql")
-# #     uvoziSQL(cur, "player_attributes.sql")
-# #     uvoziSQL(cur, "team.sql")
-# #     uvoziSQL(cur, "team_attributes.sql")
-# # exit()
-
-
-# # print("Katere tabele so v bazi?")
-# # with sqlite3.connect(baza_datoteka) as con:
-# #     cur = con.cursor()
-# #     res = cur.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
-# #     print(res.fetchall())
-
-# # print("Katere vrstice so v tabeli?")
-# # with sqlite3.connect(baza_datoteka) as con:
-# #     cur = con.cursor()
-# #     cur.execute("SELECT COUNT(*) FROM Match WHERE league_id = 1729")
-# #     #print(cur.fetchall())    ## fetchall kliče tolikokrat doker se ne izprazni vse (če bi potem poklicali še enkrat fetchall bi dobili prazno)
-# #     for podatek in cur:
-# #         print(podatek)
-
-
-
-##: Tukaj moramo ustvariti bazo, če je še ni
-
-# #baza.pripravi_vse(conn)   #naj naredi baza vse kar je treba delati
-
-# #class Model:
-#     #def dobi_vse_uporabnike(self):
-#         #with conn:
-#             #cur = conn.execute("""
-#             #SELECT * FROM uporabnik
-#             #""")
-#             #return cur.fetchall()
-
-
-
-# # IZBRIŠEMO ODVEČNE FIFA KARTICE
-# # SELECT * FROM Player_Attributes
-# # JOIN (
-# #   SELECT player_api_id, MAX(date) AS max_date FROM Player_Attributes
-# #   GROUP BY player_api_id
-# # ) AS recent_dates
-# # ON Player_Attributes.player_api_id = recent_dates.player_api_id
-# # WHERE Player_Attributes.date = recent_dates.max_date AND date > '2015-01-01 00:00:00';
+### ekipa/<ime_ekipe>
+# jo uporabimo, da vidimo igralce posamezne ekipe
+def ekipa_model(ime_ekipe):
+    s = f"""SELECT Player.player_name, Player.birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, Player.player_coordinate_y FROM Player 
+            JOIN Team ON Player.team_id = Team.team_api_id WHERE Team.team_long_name = '{ime_ekipe}';"""
+    res = cur.execute(s) 
+    igralci = res.fetchall()
+    return ime_ekipe, igralci

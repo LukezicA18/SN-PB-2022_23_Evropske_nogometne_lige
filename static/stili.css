@@ -14,3 +14,14 @@ th {
 tr:nth-child(even) {
   background-color: #f2f2f2;
 }
+
+
+ul {
+    column-count: 1;
+    column-gap: 2rem;
+    list-style: none;
+  }
+
+  body,html {
+    height: 100%;
+  }

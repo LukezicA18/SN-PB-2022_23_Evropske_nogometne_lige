@@ -36,6 +36,7 @@ def do_lestvica():
     krog = int(request.forms.get('krog'))
     lest_sortirana = model.naredi_lestvico(league_id, sezona, krog)
     liga = model.id_lige_v_ime(league_id)   #da lahko damo naslov (napisemo kakatero lestvico gledamo)
+    liga_tuple = (liga)
     return template("liga.html", lestvica=lest_sortirana, liga = liga)
 
 
@@ -87,7 +88,6 @@ def prodaj(igralec_id):
 
 
 
-
 #####################################################
 # quick match
 #####################################################
@@ -115,13 +115,6 @@ def load_quick_match():
 
     return template("quick_match.html", home_igralci=home_igralci, away_igralci=away_igralci, vse_ekipe =vse_ekipe, domaci = domaci_ime, gostje = gostje_ime, poz=model.POZICIJE)   # vse ekipe trenutno ne bi rabil, ker nekaj ne dela
 
-
-# @post('/simuliraj_tekmo')
-# def simuliraj_tekmo():
-#     seznam_home_igralcev = []
-#     seznam_away_igralcev = []
-#     # res = f_izracunaj_stohasticen_rezultat(seznam_home_igralcev, seznam_away_igralcev)
-#     return '2 : 1'
 
 @post('/simuliraj_tekmo')
 def simuliraj_tekmo():
@@ -163,96 +156,13 @@ def simuliraj_tekmo():
     return template("simulacija_tekme.html", rezultat = res, domaca_ekipa = domaca_ekipa, gostujoca_ekipa = gostujoca_ekipa)
 
 
-
-# @get('/uredi_ekipo')
-# def uredi_ekipo():
-#     cur.execute("SELECT * FROM Player;")
-#     Player = cur.fetchall()
-#     return template("igralci.html", Player = Player)
-
-
-# @get('/lestvica/<league_id>')
-# def lestvica(league_id):
-#     s = f"SELECT Team.team_long_name, Team.team_short_name FROM Team JOIN League ON Team.league_id = League.id where League.id = {league_id}"
-#     res = cur.execute(s)
-#     teams = res.fetchall()
-#     print(teams)
-#     return template("lestvica.html", ekipe=teams)
-
-
-# @get('/lestvica/<league_id>')
-# def lestvica(league_id):
-#     s = f"SELECT Team.team_long_name, Team.team_short_name FROM Team JOIN League ON Team.league_id = League.id where League.id = {league_id}"
-#     res = cur.execute(s)
-#     teams = res.fetchall()
-#     print(teams)
-#     return template("lestvica.html", ekipe=teams)
-
-
 #da izpiše vse igralce
 @get('/ekipa/<ime_ekipe>')
 def ekipa(ime_ekipe):
     ime_ekipe, igralci = model.ekipa_model(ime_ekipe)
     return template("ekipa.html", ime_ekipe=ime_ekipe, igralci=igralci)
 
-# @get('/igralec/<ime_igralca>')
-# def igralec(ime_igralca):
-#     s = f'''SELECT Player.birthday, Team.team_long_name, Team.team_short_name, 
-#             Player.player_coordinate_x, Player.player_coordinate_y FROM Player 
-#             JOIN Team ON Player.team_id = Team.team_api_id
-#             WHERE Player.player_name = {ime_igralca}'''
-#     res = cur.execute(s)
-#     atributi = res.fetchall()
-#     return template("igralec.html",ime_igralca = ime_igralca)
-
-
-# @post('/lestvica')
-# def do_lestvica():
-#     league_id = request.forms.get('liga')
-#     sezona = request.forms.get('sezona')
-#     print(league_id, sezona)
-#     s = f"SELECT Team.team_long_name, Team.team_short_name FROM Team JOIN League ON Team.league_id = League.id where League.id = {league_id}"
-#     res = cur.execute(s)
-#     teams = res.fetchall()
-#     print(teams)
-#     return template("lestvica.html", ekipe=teams)
 
 
 bottle.run(debug=True, reloader=True)
 
-
-
-# baza = "baza_nogomet.db"
-# con = sqlite3.connect(baza)
-# cur = con.cursor()
-
-# bottle.run(debug=True, reloader=True)
-
-
-
-# # import bottle
-# # import model
-
-# # glavni_model = model.Model()
-
-# # @bottle.route("/static/slikice/<filename>")    #ZA SLIKO
-# # def serve_static_files(filename):
-# #     return bottle.static_file(filename, root="./static/img")  
-
-# # @bottle.route("/static/css/<filename>")    #ZA RDEČO barvo, dodamo to kar mamo na datoteki style.css
-# # def serve_static_files(filename):
-# #     return bottle.static_file(filename, root="./static/css") 
-
-# # @bottle.get("/")
-# # def glavna_stran():
-    
-# #     podatki = glavni_model.dobi_vse_uporabnike()
-    
-# #     return bottle.template(
-# #         "glavna.html", uporabniki=podatki
-# #         )
-
-
-
-
-# # bottle.run(debug=True, reloader=True)'
