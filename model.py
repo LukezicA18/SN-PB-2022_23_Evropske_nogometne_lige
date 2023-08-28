@@ -194,16 +194,23 @@ def seznam_igralcev_za_prikaz(ime_igralca, vratar, branilec, vezist, napadalec, 
         polozaji = tuple(polozaji)
     
     max_cena = 1000  #zelo_veliko
-    if manj100 != None:
-        max_cena = 100
-    elif manj80 != None:
-        max_cena = 80
-    elif manj60 != None:
-        max_cena = 60
+    if manj20 != None:
+        max_cena = 20
     elif manj40 != None:
         max_cena = 40
-    elif manj20 != None:
-        max_cena = 20
+    elif manj60 != None:
+        max_cena = 60
+    elif manj80 != None:
+        max_cena = 80
+    elif manj100 != None:
+        max_cena = 100
+    
+    # s = f"""SELECT Player.player_name FROM Player 
+    # JOIN Team ON Player.team_id = Team.team_api_id 
+    # JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id
+    # WHERE Player.team_id = {moja_ekipa_id};"""
+    # res = cur.execute(s)
+    # moji_igralci_tuple = res.fetchall()
 
     s = f"""SELECT Player.player_api_id, Player.player_name, DATE(Player.birthday) AS birthday, Team.team_long_name, Team.team_short_name, Player.player_coordinate_x, 
     Player.player_coordinate_y, Player_Attributes.overall_rating, Player_Attributes.preferred_foot, Player_Attributes.player_cost FROM Player 
@@ -224,7 +231,6 @@ def denar_na_zacetku():
     print(res)
     zacetni_budget = res.fetchone()[0]
     print(zacetni_budget)
-    #print(zacetni_budget)
     return zacetni_budget
 
 
@@ -245,7 +251,6 @@ def kupi(igralec_id):
     stevilo_enakih_v_moji_ekipi = cur.fetchone()[0]
     if stevilo_enakih_v_moji_ekipi != 0:
         raise Exception("Igralec je že v ekipi Moja Ekipa.")
-    # poglej kako smo zapisovali igralce, ce smo klicali po imenu, potem dobimo dva razlicna igralca z istim imenom ko kupimo enega. V tabeli je se vedno samo ta ki smo ga kupili, zato potem ko prodamo tistega ki ganismo kupili dobimo denar ampak se ne proda, ce prodamo pravega, potem se zbriseta oba
     # preverimo ce imamo dovolj denarja 
     if cena <= zacetni_budget:
         # izracunamo koliko denarja nam ostane

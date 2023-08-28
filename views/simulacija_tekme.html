@@ -1,30 +1,86 @@
-% rebase('base.html')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezultat tekme</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #4CAF50;
+        }
 
-<style>
-.body {
-    align-items:center;
-  }
-  </style>
+        .match-result {
+            text-align: center;
+            top: 50%;
+            color: black;
+            font-size: 100px;
+            z-index: 1;
+        }
 
+        .football-field {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/b/b9/Soccer_field_-_empty.svg'); 
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: -1; /* daj sliko v ozadje */
+        }
 
-<h1>Rezultat tekme</h1>
+        .team-name {
+            position: absolute;
+            color: black;
+            font-size: 60px;
+        }
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+        .home-team {
+            top: 50%;
+            left: 70px;
+            transform: translate(0, -50%);
+        }
 
+        .away-team {
+            top: 50%;
+            right: 70px;
+            transform: translate(0, -50%);
+        }
 
-<div class="p-3 mb-2 bg-success text-white">
-<body
-<div>
-    <div class="row justify-content-center align-self-center">
-        <h1>{{domaca_ekipa}} {{rezultat}} {{gostujoca_ekipa}}</h1>
+        #backButton {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="football-field">
+        <div class="team-name home-team"><b>{{domaca_ekipa}}</b></div>
+        <div class="team-name away-team"><b>{{gostujoca_ekipa}}</b></div>
+        <h1 class="match-result"><b>{{rezultat}}</b></h1>
     </div>
-</div>
 </body>
+</html>
 
+
+    <button type="button" id="backButton">Odigraj novo tekmo</button>
+
+
+<!-- gremo eno stran nazaj -->
+<script>
+    document.getElementById('backButton').addEventListener('click', function() {
+        history.back();
+    });
+</script>
 
 

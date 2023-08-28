@@ -1,0 +1,25 @@
+% rebase('base.html')
+
+<style>
+.body {
+    align-items: center;
+}
+</style>
+
+<br>
+
+<h3><b>{{besedilo}}</b></h3>
+
+<br>
+
+
+
+    <button type="button" id="backButton">Nazaj</button>
+
+
+<!-- gremo eno stran nazaj -->
+<script>
+    document.getElementById('backButton').addEventListener('click', function() {
+        history.back();
+    });
+</script>

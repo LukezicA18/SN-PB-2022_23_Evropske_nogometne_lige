@@ -77,10 +77,17 @@ def sestavi_ekipo():
 
 @post('/kupi/<igralec_id>')
 def kupi(igralec_id):
-    model.kupi(igralec_id)
+    try:
+        model.kupi(igralec_id)
+    ## pogledamo ce je kaksna napaka
+    except RuntimeError:
+        return template("napake.html", besedilo="Imate premalo denarja")
+    except Exception:
+        return template("napake.html", besedilo="Igralec je že v ekipi Moja Ekipa.")
     return redirect(url('/naredi_ekipo'))
 
-# TODO podobno kot kupi (rabil bom player_api_id), tako kot je narejeno v izbor_igralcev.html 56 vrstica
+
+#podobno kot kupi (rabil bom player_api_id), tako kot je narejeno v izbor_igralcev.html 56 vrstica
 @post('/prodaj/<igralec_id>')
 def prodaj(igralec_id):
     model.prodaj(igralec_id)
@@ -95,10 +102,10 @@ def prodaj(igralec_id):
 @get('/quick_match')
 def load_quick_match():
     # bere iz drop down menija (lahko bi tudi, da pises ime ekipe in ti ponuja izbira)
-    home_team = request.forms.get('home_team')
-    away_team = request.forms.get('away_team')
+    #home_team = request.forms.get('home_team')
+    #away_team = request.forms.get('away_team')
     vse_ekipe = model.vse_ekipe()
-    return template("quick_match.html", home_igralci=[], away_igralci=[], vse_ekipe = vse_ekipe, poz=model.POZICIJE)  # vse ekipe trenutno ne bi rabil, ker nekaj ne dela
+    return template("quick_match.html", home_igralci=[], away_igralci=[], vse_ekipe = vse_ekipe, poz=model.POZICIJE) 
 
 
 @post('/quick_match')
@@ -133,25 +140,28 @@ def simuliraj_tekmo():
     #ce je v ekipi manj kot 15 igralcev 
     st_moja_ekipa = model.stevilo_igralcev_v_moji_ekipi()
     # kasneje naredi se za splosno ekipo
-    if st_moja_ekipa < 15:
-        return f"V ekipi Moja Ekipa je premalo igralcev. V kadru za tekmo jih mora biti vsaj 15."
+    home_team = request.forms.get('home_team')
+    away_team = request.forms.get('away_team')
+
+    if st_moja_ekipa < 15 and (home_team == 'Moja Ekipa' or away_team == 'Moja Ekipa'):
+        return template("napake.html", besedilo="V ekipi Moja Ekipa je premalo igralcev. V kadru za tekmo jih mora biti vsaj 15.")
 
     #preverimo ce v kasni ekipi ni 11 igrlcev 
     koliko_home = len(seznam_domacih_igralcev)
     koliko_away = len(seznam_gostujocih_igralcev)
     if koliko_home < 11:
-        return f"V prvi postavi domače ekipe ni 11 igralcev. Manjka še: {11 - koliko_home}"
+        return template("napake.html", besedilo=f"V prvi postavi domače ekipe ni 11 igralcev. Manjka še: {11 - koliko_home}")
     if koliko_home  > 11:
-        return f"V prvi postavi domače ekipe ni 11 igralcev. Odveč jih je: {koliko_home - 11}"
+        return template("napake.html", besedilo=f"V prvi postavi domače ekipe ni 11 igralcev. Odveč jih je: {koliko_home - 11}")
     if koliko_away < 11:
-        return f"V prvi postavi gostujoče ekipe ni 11 igralcev. Manjka še: {11 - koliko_away}"
+        return template("napake.html", besedilo=f"V prvi postavi gostujoče ekipe ni 11 igralcev. Manjka še: {11 - koliko_away}")
     if koliko_away  > 11:
-        return f"V prvi postavi gostujoče ekipe ni 11 igralcev. Odveč jih je: {koliko_away - 11}"
+        return template("napake.html", besedilo=f"V prvi postavi gostujoče ekipe ni 11 igralcev. Odveč jih je: {koliko_away - 11}")
     
     domaca_ekipa = model.katera_ekipa(tuple(seznam_domacih_igralcev))
     gostujoca_ekipa = model.katera_ekipa(tuple(seznam_gostujocih_igralcev))
 
-    res = model.f_izracunaj_stohasticen_rezultat(seznam_domacih_igralcev, seznam_gostujocih_igralcev)    
+    res = model.f_izracunaj_stohasticen_rezultat(seznam_domacih_igralcev, seznam_gostujocih_igralcev) 
 
     return template("simulacija_tekme.html", rezultat = res, domaca_ekipa = domaca_ekipa, gostujoca_ekipa = gostujoca_ekipa)
 

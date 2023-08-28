@@ -21,9 +21,9 @@
 
 <div>
     <form action="/quick_match" method="post">
-        <label for="home_team">domaci</label>
+        <label for="home_team">Domaci:</label>
         <select name="home_team" id="home_team">
-            <option value=50000>MojaEkipa</option>
+            <option value=50000>Moja Ekipa</option>
             <option value=8722>1. FC Koln</option>
             <option value=9905>1. FSV Mainz 05</option>
             <option value=9829>AS Monaco</option>
@@ -123,9 +123,9 @@
             <option value=8659>West Bromwich Albion</option>
             <option value=8654>West Ham United</option>  
         </select>
-        <label for="away_team">gostje</label>
+        <label for="away_team">Gostje:</label>
         <select name="away_team" id="away_team" >
-            <option value=50000>MojaEkipa</option>
+            <option value=50000>Moja Ekipa</option>
             <option value=8722>1. FC Koln</option>
             <option value=9905>1. FSV Mainz 05</option>
             <option value=9829>AS Monaco</option>
@@ -294,6 +294,9 @@
 
           <br>
 
+          <!-- da vidimo tudi v /simulacija_tekme kaksni ekipi smo izbrali-->
+          <input type="hidden" name="home_team" value="{{domaci}}">
+          <input type="hidden" name="away_team" value="{{gostje}}">
         <button type="submit">Odigraj tekmo</button>
         %end
 
@@ -301,7 +304,3 @@
     </form>
 
 </div>
-
-
-
-    
